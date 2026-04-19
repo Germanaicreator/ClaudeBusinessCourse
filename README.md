@@ -1,4 +1,4 @@
-# AI Experts Business Suite
+# Claude for Business Github Repo
 
 A complete, Claude Code–built business tech stack for an example solo AI automation consultancy — built live as part of a video course by **Dominik Pascal Felber (Germanaicreator)**.
 
