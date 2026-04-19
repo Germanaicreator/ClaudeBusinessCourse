@@ -1,0 +1,23 @@
+[
+  {
+    "index": 0,
+    "start": 7.5,
+    "end": 11.8,
+    "description": "Compliance document with a red X overlay — agency legally responsible, not the vendor",
+    "prompt": "Sleek modern SaaS illustration, dark navy background (#07070e) with subtle gold grid lines, a large legal compliance document or contract illuminated in gold light, a bold red diagonal warning mark across it, regulatory seal glowing at the bottom, minimal clean style, no text, cinematic soft lighting, ultra-sharp, professional B2B design aesthetic, 9:16 vertical portrait format, photorealistic rendering"
+  },
+  {
+    "index": 1,
+    "start": 15.5,
+    "end": 19.8,
+    "description": "Human recruiter reviewing an AI-generated candidate shortlist — human oversight of AI",
+    "prompt": "Sleek modern SaaS illustration, dark navy background (#07070e) with subtle gold grid lines, a glowing digital candidate shortlist floating in mid-air with AI ranking scores, a single human hand reaching in to review and override the top entry with a golden checkmark, data streams flowing from the list, minimal clean style, no text, cinematic soft lighting, ultra-sharp, professional B2B design aesthetic, 9:16 vertical portrait format, photorealistic rendering"
+  },
+  {
+    "index": 2,
+    "start": 29.5,
+    "end": 33.5,
+    "description": "Competitive edge and growth — agencies getting ahead on AI governance win clients",
+    "prompt": "Sleek modern SaaS illustration, dark navy background (#07070e) with subtle gold grid lines, an upward-trending glowing gold graph line rising steeply with a shield icon at the peak symbolising trust and compliance, abstract data nodes orbiting the shield, minimal clean style, no text, cinematic soft lighting, ultra-sharp, professional B2B design aesthetic, 9:16 vertical portrait format, photorealistic rendering"
+  }
+]

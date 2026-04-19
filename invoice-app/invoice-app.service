@@ -1,0 +1,21 @@
+[Unit]
+Description=AI Experts Invoice Dashboard (Gunicorn)
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/invoice
+EnvironmentFile=/var/www/invoice/.env
+ExecStart=/var/www/invoice/venv/bin/gunicorn \
+    --workers 2 \
+    --bind 127.0.0.1:5001 \
+    --timeout 120 \
+    --log-file /var/log/invoice-app.log \
+    --access-logfile /var/log/invoice-app-access.log \
+    app:app
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

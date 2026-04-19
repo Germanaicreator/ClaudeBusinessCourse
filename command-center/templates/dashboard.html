@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Command Center — AI Experts</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #07070e; --bg2: #0c0c17; --bgcard: #0f0f1c; --bgcard2: #131326;
+      --border: rgba(255,255,255,0.07); --bordergold: rgba(201,169,110,0.22);
+      --text: #ede9df; --muted: rgba(237,233,223,0.54); --subtle: rgba(237,233,223,0.3);
+      --gold: #c9a96e; --goldlight: #dfbd84; --golddim: rgba(201,169,110,0.08);
+      --goldglow: rgba(201,169,110,0.25); --goldglow2: rgba(201,169,110,0.12);
+      --green: #3da870; --greendim: rgba(61,168,112,0.1);
+      --blue: #5a9cf8; --bluedim: rgba(90,156,248,0.1);
+      --purple: #a07ef0; --purpledim: rgba(160,126,240,0.1);
+      --red: #e05555; --reddim: rgba(224,85,85,0.1);
+      --r: 16px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: 'Outfit', sans-serif; font-size: 15px;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    /* ── Background ── */
+    body::before {
+      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background:
+        radial-gradient(ellipse 70% 50% at 50% -5%, rgba(201,169,110,0.07) 0%, transparent 55%),
+        radial-gradient(ellipse 40% 30% at 85% 90%, rgba(90,156,248,0.04) 0%, transparent 50%);
+    }
+
+    /* ── Topbar ── */
+    .topbar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(7,7,14,0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center;
+      padding: 0 40px; height: 64px;
+      gap: 16px;
+    }
+    .topbar-icon {
+      width: 34px; height: 34px;
+      background: var(--golddim);
+      border: 1px solid var(--bordergold);
+      border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--gold);
+      flex-shrink: 0;
+    }
+    .topbar-title {
+      font-family: 'Cormorant', serif;
+      font-size: 1.3rem; font-weight: 700;
+      letter-spacing: -0.01em;
+      flex: 1;
+    }
+    .topbar-pill {
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(61,168,112,0.1);
+      border: 1px solid rgba(61,168,112,0.25);
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-size: 0.72rem; font-weight: 600;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--green);
+    }
+    .topbar-pill::before {
+      content: '';
+      width: 6px; height: 6px;
+      background: var(--green);
+      border-radius: 50%;
+    }
+    .topbar-logout {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 0.8rem; color: var(--muted);
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .topbar-logout:hover { color: var(--text); border-color: var(--bordergold); }
+
+    /* ── Page ── */
+    .page {
+      position: relative; z-index: 1;
+      max-width: 1100px; margin: 0 auto;
+      padding: 56px 40px 80px;
+    }
+
+    .page-header { margin-bottom: 52px; }
+    .page-eyebrow {
+      font-size: 0.72rem; font-weight: 600;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 10px;
+    }
+    .page-title {
+      font-family: 'Cormorant', serif;
+      font-size: 3rem; font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      margin-bottom: 12px;
+    }
+    .page-title em {
+      font-style: italic;
+      background: linear-gradient(135deg, var(--gold), var(--goldlight));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .page-sub {
+      font-size: 1rem; color: var(--muted); max-width: 480px; line-height: 1.7;
+    }
+
+    /* ── Tile grid ── */
+    .tile-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .tile {
+      position: relative;
+      background: var(--bgcard);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 36px 32px;
+      cursor: pointer;
+      overflow: hidden;
+      transition: border-color 0.25s, transform 0.2s, box-shadow 0.25s;
+      display: flex; flex-direction: column;
+      min-height: 240px;
+      text-decoration: none;
+    }
+    .tile::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% 0%, var(--tile-glow, rgba(201,169,110,0.06)) 0%, transparent 65%);
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
+    .tile:hover::before { opacity: 1; }
+    .tile:hover {
+      border-color: var(--tile-border, var(--bordergold));
+      transform: translateY(-3px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 0 1px var(--tile-border, rgba(201,169,110,0.12));
+    }
+    .tile:active { transform: translateY(-1px); }
+
+    /* Top accent line */
+    .tile::after {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, var(--tile-accent, var(--gold)), transparent 60%);
+      opacity: 0.5;
+    }
+
+    /* Tile variants */
+    .tile-gold  { --tile-glow: rgba(201,169,110,0.08); --tile-border: rgba(201,169,110,0.35); --tile-accent: #c9a96e; }
+    .tile-green { --tile-glow: rgba(61,168,112,0.08);  --tile-border: rgba(61,168,112,0.35);  --tile-accent: #3da870; }
+    .tile-blue  { --tile-glow: rgba(90,156,248,0.08);  --tile-border: rgba(90,156,248,0.35);  --tile-accent: #5a9cf8; }
+    .tile-purple{ --tile-glow: rgba(160,126,240,0.08); --tile-border: rgba(160,126,240,0.35); --tile-accent: #a07ef0; }
+
+    .tile-icon-wrap {
+      width: 52px; height: 52px;
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 20px;
+      flex-shrink: 0;
+    }
+    .tile-gold   .tile-icon-wrap { background: rgba(201,169,110,0.12); border: 1px solid rgba(201,169,110,0.25); color: var(--gold); }
+    .tile-green  .tile-icon-wrap { background: rgba(61,168,112,0.12);  border: 1px solid rgba(61,168,112,0.25);  color: var(--green); }
+    .tile-blue   .tile-icon-wrap { background: rgba(90,156,248,0.12);  border: 1px solid rgba(90,156,248,0.25);  color: var(--blue); }
+    .tile-purple .tile-icon-wrap { background: rgba(160,126,240,0.12); border: 1px solid rgba(160,126,240,0.25); color: var(--purple); }
+
+    .tile-body { flex: 1; }
+    .tile-label {
+      font-size: 0.68rem; font-weight: 700;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      margin-bottom: 8px;
+      opacity: 0.6;
+    }
+    .tile-gold   .tile-label { color: var(--gold); }
+    .tile-green  .tile-label { color: var(--green); }
+    .tile-blue   .tile-label { color: var(--blue); }
+    .tile-purple .tile-label { color: var(--purple); }
+
+    .tile-title {
+      font-family: 'Cormorant', serif;
+      font-size: 1.65rem; font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin-bottom: 10px;
+    }
+    .tile-desc {
+      font-size: 0.84rem; color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .tile-footer {
+      margin-top: 24px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .tile-tags {
+      display: flex; gap: 6px; flex-wrap: wrap;
+    }
+    .tile-tag {
+      font-size: 0.68rem; font-weight: 600;
+      padding: 3px 9px;
+      border-radius: 20px;
+      letter-spacing: 0.04em;
+    }
+    .tile-gold   .tile-tag { background: rgba(201,169,110,0.1); color: var(--gold);   border: 1px solid rgba(201,169,110,0.2); }
+    .tile-green  .tile-tag { background: rgba(61,168,112,0.1);  color: var(--green);  border: 1px solid rgba(61,168,112,0.2); }
+    .tile-blue   .tile-tag { background: rgba(90,156,248,0.1);  color: var(--blue);   border: 1px solid rgba(90,156,248,0.2); }
+    .tile-purple .tile-tag { background: rgba(160,126,240,0.1); color: var(--purple); border: 1px solid rgba(160,126,240,0.2); }
+
+    .tile-arrow {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: transform 0.2s;
+      opacity: 0.5;
+    }
+    .tile:hover .tile-arrow { transform: translateX(4px); opacity: 1; }
+    .tile-gold   .tile-arrow { background: rgba(201,169,110,0.1); color: var(--gold); }
+    .tile-green  .tile-arrow { background: rgba(61,168,112,0.1);  color: var(--green); }
+    .tile-blue   .tile-arrow { background: rgba(90,156,248,0.1);  color: var(--blue); }
+    .tile-purple .tile-arrow { background: rgba(160,126,240,0.1); color: var(--purple); }
+
+    /* ── Content tile sub-buttons ── */
+    .tile-subnav {
+      display: flex; gap: 8px; flex-wrap: wrap;
+      margin-top: 16px;
+    }
+    .sub-btn {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 0.75rem; font-weight: 600;
+      padding: 5px 12px; border-radius: 7px;
+      letter-spacing: 0.04em;
+      border: 1px solid rgba(90,156,248,0.25);
+      background: rgba(90,156,248,0.07);
+      color: var(--blue);
+      transition: background 0.15s, border-color 0.15s;
+      pointer-events: auto;
+    }
+    .sub-btn:hover { background: rgba(90,156,248,0.14); border-color: rgba(90,156,248,0.4); }
+
+    /* ── Status bar ── */
+    .status-bar {
+      display: flex; align-items: center; gap: 24px;
+      margin-top: 40px;
+      padding: 18px 24px;
+      background: var(--bgcard);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+    }
+    .status-item {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 0.78rem; color: var(--muted);
+    }
+    .status-dot {
+      width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+    }
+    .status-dot.online  { background: var(--green); box-shadow: 0 0 6px rgba(61,168,112,0.5); }
+    .status-dot.offline { background: var(--muted); }
+
+    /* ── Responsive ── */
+    @media (max-width: 720px) {
+      .topbar { padding: 0 20px; }
+      .page   { padding: 36px 20px 60px; }
+      .page-title { font-size: 2.2rem; }
+      .tile-grid { grid-template-columns: 1fr; }
+      .tile { min-height: 200px; padding: 28px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── Topbar ────────────────────────────────────────────────────────────── -->
+<header class="topbar">
+  <div class="topbar-icon">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="18" height="18">
+      <rect x="2" y="3" width="7" height="7" rx="1.5"/>
+      <rect x="15" y="3" width="7" height="7" rx="1.5"/>
+      <rect x="2" y="14" width="7" height="7" rx="1.5"/>
+      <rect x="15" y="14" width="7" height="7" rx="1.5"/>
+    </svg>
+  </div>
+  <span class="topbar-title">Command Center</span>
+  <div class="topbar-pill">All Systems Online</div>
+  <a href="/logout" class="topbar-logout">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="14" height="14">
+      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+      <polyline points="16,17 21,12 16,7"/><line x1="21" y1="12" x2="9" y2="12"/>
+    </svg>
+    Logout
+  </a>
+</header>
+
+<!-- ─── Page ──────────────────────────────────────────────────────────────── -->
+<div class="page">
+
+  <div class="page-header">
+    <div class="page-eyebrow">AI Experts · Operations Hub</div>
+    <h1 class="page-title">Your <em>Business</em><br>Command Center</h1>
+    <p class="page-sub">Access all your business systems from one secure dashboard. One login, every tool.</p>
+  </div>
+
+  <!-- ─── Tile Grid ─────────────────────────────────────────────────────── -->
+  <div class="tile-grid">
+
+    <!-- Revenue Dashboard -->
+    <a href="/launch/revenue" class="tile tile-gold">
+      <div class="tile-icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="26" height="26">
+          <line x1="18" y1="20" x2="18" y2="10"/>
+          <line x1="12" y1="20" x2="12" y2="4"/>
+          <line x1="6"  y1="20" x2="6"  y2="14"/>
+          <line x1="2"  y1="20" x2="22" y2="20"/>
+        </svg>
+      </div>
+      <div class="tile-body">
+        <div class="tile-label">Finance</div>
+        <div class="tile-title">Revenue Dashboard</div>
+        <div class="tile-desc">Track total revenue, open invoices, payment status, and financial performance across all clients.</div>
+      </div>
+      <div class="tile-footer">
+        <div class="tile-tags">
+          <span class="tile-tag">Revenue</span>
+          <span class="tile-tag">Analytics</span>
+          <span class="tile-tag">KPIs</span>
+        </div>
+        <div class="tile-arrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="16" height="16">
+            <line x1="5" y1="12" x2="19" y2="12"/>
+            <polyline points="12,5 19,12 12,19"/>
+          </svg>
+        </div>
+      </div>
+    </a>
+
+    <!-- Invoice Creator -->
+    <a href="/launch/invoice" class="tile tile-green">
+      <div class="tile-icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="26" height="26">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14,2 14,8 20,8"/>
+          <line x1="12" y1="13" x2="12" y2="19"/>
+          <line x1="9"  y1="16" x2="15" y2="16"/>
+        </svg>
+      </div>
+      <div class="tile-body">
+        <div class="tile-label">Billing</div>
+        <div class="tile-title">Invoice Creator</div>
+        <div class="tile-desc">Create, finalize, and send professional invoices to clients. Manage products, clients, and payment tracking.</div>
+      </div>
+      <div class="tile-footer">
+        <div class="tile-tags">
+          <span class="tile-tag">Invoices</span>
+          <span class="tile-tag">Clients</span>
+          <span class="tile-tag">PDF</span>
+        </div>
+        <div class="tile-arrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="16" height="16">
+            <line x1="5" y1="12" x2="19" y2="12"/>
+            <polyline points="12,5 19,12 12,19"/>
+          </svg>
+        </div>
+      </div>
+    </a>
+
+    <!-- Content Center -->
+    <a href="/content" class="tile tile-blue">
+      <div class="tile-icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="26" height="26">
+          <polygon points="23,7 16,12 23,17 23,7"/>
+          <rect x="1" y="5" width="15" height="14" rx="2"/>
+        </svg>
+      </div>
+      <div class="tile-body">
+        <div class="tile-label">Marketing</div>
+        <div class="tile-title">Content Center</div>
+        <div class="tile-desc">Review created blog posts, LinkedIn posts, and AI avatar videos. Launch content creation skills from one place.</div>
+        <div class="tile-subnav" onclick="event.preventDefault()">
+          <span class="sub-btn" onclick="window.location='/content#blog'">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+            Blog
+          </span>
+          <span class="sub-btn" onclick="window.location='/content#linkedin'">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+            LinkedIn
+          </span>
+          <span class="sub-btn" onclick="window.location='/content#videos'">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><polygon points="23,7 16,12 23,17 23,7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+            Videos
+          </span>
+          <span class="sub-btn" onclick="window.location='/content#skills'">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            Skills
+          </span>
+        </div>
+      </div>
+      <div class="tile-footer">
+        <div class="tile-tags">
+          <span class="tile-tag">Blog</span>
+          <span class="tile-tag">LinkedIn</span>
+          <span class="tile-tag">Video</span>
+        </div>
+        <div class="tile-arrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="16" height="16">
+            <line x1="5" y1="12" x2="19" y2="12"/>
+            <polyline points="12,5 19,12 12,19"/>
+          </svg>
+        </div>
+      </div>
+    </a>
+
+    <!-- File Anonymizer -->
+    <a href="/pii/" class="tile tile-purple">
+      <div class="tile-icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="26" height="26">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          <polyline points="9,12 11,14 15,10"/>
+        </svg>
+      </div>
+      <div class="tile-body">
+        <div class="tile-label">Compliance</div>
+        <div class="tile-title">File Anonymizer</div>
+        <div class="tile-desc">Remove all personal data (PII) from candidate CVs, contracts, and documents before sharing. Powered by Azure OpenAI.</div>
+      </div>
+      <div class="tile-footer">
+        <div class="tile-tags">
+          <span class="tile-tag">GDPR</span>
+          <span class="tile-tag">PII</span>
+          <span class="tile-tag">Documents</span>
+        </div>
+        <div class="tile-arrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="16" height="16">
+            <line x1="5" y1="12" x2="19" y2="12"/>
+            <polyline points="12,5 19,12 12,19"/>
+          </svg>
+        </div>
+      </div>
+    </a>
+
+  </div><!-- /tile-grid -->
+
+  <!-- ─── Status Bar ─────────────────────────────────────────────────────── -->
+  <div class="status-bar">
+    <div class="status-item">
+      <div class="status-dot online"></div>
+      Revenue Dashboard
+    </div>
+    <div class="status-item">
+      <div class="status-dot online"></div>
+      Invoice Creator
+    </div>
+    <div class="status-item">
+      <div class="status-dot online"></div>
+      Content Center
+    </div>
+    <div class="status-item">
+      <div class="status-dot online"></div>
+      File Anonymizer
+    </div>
+    <div style="margin-left:auto; font-size:0.72rem; color:var(--subtle);">
+      AI Experts &copy; 2026
+    </div>
+  </div>
+
+</div><!-- /page -->
+</body>
+</html>

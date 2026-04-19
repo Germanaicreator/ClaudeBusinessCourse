@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Invoice {{ invoice.invoice_number }}</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 18mm;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 10pt;
+      color: #1a1a1a;
+      background: #fff;
+      line-height: 1.5;
+    }
+
+    /* ── FULL-PAGE WRAPPER TABLE ───────────────────────────────────────────
+       A4 content area with 18mm margins all sides = 297-36 = 261mm.
+       We use 256mm so content never spills to a second page.
+       The two-row table: row 1 fills all available space (content),
+       row 2 is fixed at 22mm (banking footer) and sits at the bottom.
+    ──────────────────────────────────────────────────────────────────────── */
+    .page-table {
+      width: 100%;
+      height: 256mm;
+      border-collapse: collapse;
+    }
+    .page-table td {
+      padding: 0;
+    }
+    .content-cell {
+      vertical-align: top;
+    }
+    .footer-cell {
+      vertical-align: top;
+      height: 22mm;
+      border-top: 1px solid #e0e0e0;
+      padding-top: 6pt !important;
+    }
+
+    /* ── LOGO ─────────────────────────────────────────────────────────────── */
+    .logo-section {
+      text-align: center;
+      margin-bottom: 22pt;
+      padding-bottom: 14pt;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    .logo-section img {
+      height: 72pt;
+      max-width: 220pt;
+    }
+    .logo-text {
+      font-size: 22pt;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: #1a1a1a;
+    }
+
+    /* ── HEADER BLOCK ─────────────────────────────────────────────────────── */
+    .header-block {
+      display: table;
+      width: 100%;
+      margin-bottom: 24pt;
+    }
+    .header-left, .header-right {
+      display: table-cell;
+      vertical-align: top;
+    }
+    .header-right {
+      text-align: right;
+      white-space: nowrap;
+      width: 44%;
+    }
+    .sender-line {
+      font-size: 8pt;
+      color: #555;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 5pt;
+      margin-bottom: 8pt;
+    }
+    .recipient-name { font-size: 11pt; font-weight: 700; margin-bottom: 2pt; }
+    .recipient-addr { font-size: 10pt; line-height: 1.6; }
+
+    .meta-table { border-collapse: collapse; }
+    .meta-table td { padding: 2pt 6pt 2pt 0; font-size: 10pt; }
+    .meta-table td.meta-label { color: #555; white-space: nowrap; padding-right: 12pt; }
+    .meta-table td.meta-val   { font-weight: 700; text-align: right; }
+
+    /* ── TITLE ────────────────────────────────────────────────────────────── */
+    .invoice-title  { font-size: 26pt; font-weight: 700; margin-bottom: 10pt; }
+    .invoice-intro  { font-size: 10pt; color: #333; margin-bottom: 18pt; }
+
+    /* ── ITEMS TABLE ──────────────────────────────────────────────────────── */
+    .items-table { width: 100%; border-collapse: collapse; }
+    .items-table th {
+      font-size: 10pt; font-weight: 700; padding: 7pt 6pt; text-align: left;
+      border-bottom: 2px solid #1a1a1a; border-top: 2px solid #1a1a1a;
+    }
+    .items-table th.text-right,
+    .items-table td.text-right { text-align: right; }
+    .items-table td {
+      padding: 7pt 6pt; font-size: 10pt; border-bottom: 1px solid #e0e0e0;
+    }
+    .items-table tr:last-child td { border-bottom: none; }
+    .col-desc  { width: 44%; }
+    .col-amt   { width: 12%; }
+    .col-vat   { width: 10%; }
+    .col-price { width: 17%; }
+    .col-total { width: 17%; }
+
+    /* ── TOTALS ───────────────────────────────────────────────────────────── */
+    .totals-wrap   { display: table; width: 100%; }
+    .totals-right  { display: table-cell; width: 50%; padding-left: 50%; }
+    .totals-table  { width: 100%; border-collapse: collapse; }
+    .totals-table tr td        { padding: 5pt 8pt; font-size: 10pt; }
+    .totals-table tr.total-row td {
+      font-weight: 700; font-size: 11pt; background: #f5f5f5; border-top: 1px solid #ccc;
+    }
+    .totals-table tr.vat-row td {
+      color: #555; font-size: 9.5pt; background: #f9f9f9;
+    }
+    .totals-table td.amt-col { text-align: right; font-weight: 600; }
+
+    /* ── PAYMENT & CLOSING ────────────────────────────────────────────────── */
+    .payment-terms { margin-top: 24pt; font-size: 10pt; font-weight: 700; }
+    .closing-text  { margin-top: 12pt; font-size: 10pt; color: #333; }
+
+    /* ── BANKING FOOTER (inside footer-cell) ──────────────────────────────── */
+    .footer-row  { display: table; width: 100%; }
+    .footer-col  { display: table-cell; font-size: 8pt; color: #555;
+                   vertical-align: top; line-height: 1.55; }
+    .footer-col-right  { text-align: right; }
+    .footer-col-center { text-align: center; }
+    .footer-col strong { color: #1a1a1a; font-size: 8.5pt; }
+  </style>
+</head>
+<body>
+
+<table class="page-table">
+  <!-- ── CONTENT ROW — fills all space above footer ── -->
+  <tr>
+    <td class="content-cell">
+
+      <!-- LOGO -->
+      <div class="logo-section">
+        {% if logo_url %}
+        <img src="{{ logo_url }}" alt="{{ COMPANY.name }}">
+        {% else %}
+        <div class="logo-text">{{ COMPANY.name }}</div>
+        {% endif %}
+      </div>
+
+      <!-- HEADER: sender / recipient / meta -->
+      <div class="header-block">
+        <div class="header-left">
+          <div class="sender-line">{{ COMPANY.name }} &middot; {{ COMPANY.address }}</div>
+          <div class="recipient-name">{{ invoice.client.company_name }}</div>
+          <div class="recipient-addr">
+            {{ invoice.client.address | replace('\n', '<br>') | safe }}
+          </div>
+        </div>
+        <div class="header-right">
+          <table class="meta-table">
+            <tr>
+              <td class="meta-label">Invoice No.:</td>
+              <td class="meta-val">{{ invoice.invoice_number }}</td>
+            </tr>
+            <tr>
+              <td class="meta-label">Invoice Date:</td>
+              <td class="meta-val">{{ invoice.invoice_date.strftime('%d.%m.%Y') }}</td>
+            </tr>
+            <tr>
+              <td class="meta-label">Delivery Date:</td>
+              <td class="meta-val">
+                {% if invoice.delivery_date %}
+                  {{ invoice.delivery_date.strftime('%d.%m.%Y') }}
+                {% else %}
+                  {{ invoice.invoice_date.strftime('%d.%m.%Y') }}
+                {% endif %}
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <!-- TITLE -->
+      <div class="invoice-title">Invoice</div>
+      <div class="invoice-intro">Thank you for your order. We invoice you for the following service:</div>
+
+      <!-- LINE ITEMS -->
+      <table class="items-table">
+        <thead>
+          <tr>
+            <th class="col-desc">Description</th>
+            <th class="col-amt text-right">Amount</th>
+            <th class="col-vat text-right">VAT</th>
+            <th class="col-price text-right">Price</th>
+            <th class="col-total text-right">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in invoice.items %}
+          <tr>
+            <td>{{ item.description }}</td>
+            <td class="text-right">{{ "%.2f"|format(item.amount) }}</td>
+            <td class="text-right">19%</td>
+            <td class="text-right">{{ fmt(item.price) }}</td>
+            <td class="text-right">{{ fmt(item.line_total) }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <!-- TOTALS -->
+      <div class="totals-wrap">
+        <div class="totals-right">
+          <table class="totals-table">
+            <tr class="total-row">
+              <td>Total</td>
+              <td class="amt-col">{{ fmt(invoice.total_amount) }}</td>
+            </tr>
+            <tr class="vat-row">
+              <td>Incl. VAT 19%</td>
+              <td class="amt-col">{{ fmt(invoice.vat_amount) }}</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <!-- PAYMENT TERMS -->
+      <div class="payment-terms">Due upon receipt of invoice.</div>
+      <div class="closing-text">Thank you for your order and we look forward to continued cooperation.</div>
+
+    </td>
+  </tr>
+
+  <!-- ── FOOTER ROW — pinned to bottom of table ── -->
+  <tr>
+    <td class="footer-cell">
+      <div class="footer-row">
+        <div class="footer-col">
+          <strong>{{ COMPANY.name }}</strong><br>
+          {{ COMPANY.address }}<br>
+          Steuernr.: {{ COMPANY.tax_number }}<br>
+          {% if COMPANY.vat_id %}USt-IdNr.: {{ COMPANY.vat_id }}{% endif %}
+        </div>
+        <div class="footer-col footer-col-center">
+          Tel.: {{ COMPANY.phone }}<br>
+          E-Mail: {{ COMPANY.email }}<br>
+          {{ COMPANY.website }}
+        </div>
+        <div class="footer-col footer-col-right">
+          <strong>{{ COMPANY.bank }}</strong><br>
+          IBAN: {{ COMPANY.iban }}<br>
+          BIC/Swift: {{ COMPANY.bic }}
+        </div>
+      </div>
+    </td>
+  </tr>
+</table>
+
+</body>
+</html>

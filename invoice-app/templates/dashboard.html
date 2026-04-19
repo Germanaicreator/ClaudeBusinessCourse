@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — AI Experts Invoices{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block topbar_actions %}
+<a href="{{ url_for('invoice_new') }}" class="btn btn-gold btn-sm">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="14" height="14">
+    <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+  </svg>
+  New Invoice
+</a>
+{% endblock %}
+
+{% block content %}
+
+<!-- ─── STATS ────────────────────────────────────────────────────────────── -->
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-label">Total Revenue</div>
+    <div class="stat-value gold">{{ fmt(total_revenue) }}</div>
+    <div class="stat-sub">All sent &amp; paid invoices</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Revenue {{ current_year }}</div>
+    <div class="stat-value gold">{{ fmt(year_revenue) }}</div>
+    <div class="stat-sub">Current year</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Open Invoices</div>
+    <div class="stat-value {% if open_invoices|length > 0 %}accent-warn{% endif %}">
+      {{ open_invoices|length }}
+    </div>
+    <div class="stat-sub">Awaiting payment</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Drafts</div>
+    <div class="stat-value">{{ draft_count }}</div>
+    <div class="stat-sub">Unsent invoices</div>
+  </div>
+</div>
+
+<!-- ─── OPEN INVOICES ────────────────────────────────────────────────────── -->
+<section class="section">
+  <div class="section-header">
+    <h2 class="section-title">Open Invoices</h2>
+    <a href="{{ url_for('invoices', status='sent') }}" class="link-subtle">View all →</a>
+  </div>
+
+  {% if open_invoices %}
+  <div class="card table-card">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Invoice #</th>
+          <th>Client</th>
+          <th>Amount</th>
+          <th>Sent</th>
+          <th>Days Open</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for inv in open_invoices %}
+        <tr>
+          <td>
+            <a href="{{ url_for('invoice_view', invoice_id=inv.id) }}" class="link-gold">
+              #{{ inv.invoice_number }}
+            </a>
+          </td>
+          <td>{{ inv.client.company_name }}</td>
+          <td class="td-amount">{{ fmt(inv.total_amount) }}</td>
+          <td class="td-muted">{{ inv.sent_at.strftime('%d.%m.%Y') if inv.sent_at else '—' }}</td>
+          <td class="td-muted">
+            {% if inv.sent_at %}
+              {{ (now_utc - inv.sent_at).days }} d
+            {% else %}—{% endif %}
+          </td>
+          <td>
+            <div class="action-row">
+              {% if inv.has_pdf %}
+              <a href="{{ url_for('invoice_download', invoice_id=inv.id) }}"
+                 class="btn btn-ghost btn-xs" title="Download PDF">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                PDF
+              </a>
+              {% endif %}
+              <form method="POST" action="{{ url_for('mark_paid', invoice_id=inv.id) }}"
+                    onsubmit="return confirm('Mark Invoice #{{ inv.invoice_number }} as paid?')">
+                <button type="submit" class="btn btn-green btn-xs">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="13" height="13">
+                    <polyline points="20,6 9,17 4,12"/>
+                  </svg>
+                  Mark Paid
+                </button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="44" height="44">
+      <polyline points="20,6 9,17 4,12"/>
+    </svg>
+    <p>No open invoices — everything is paid up!</p>
+  </div>
+  {% endif %}
+</section>
+
+<!-- ─── RECENTLY PAID ─────────────────────────────────────────────────────── -->
+{% if recent_paid %}
+<section class="section">
+  <div class="section-header">
+    <h2 class="section-title">Recently Paid</h2>
+    <a href="{{ url_for('invoices', status='paid') }}" class="link-subtle">View all →</a>
+  </div>
+  <div class="card table-card">
+    <table class="table">
+      <thead>
+        <tr><th>Invoice #</th><th>Client</th><th>Amount</th><th>Paid on</th></tr>
+      </thead>
+      <tbody>
+        {% for inv in recent_paid %}
+        <tr>
+          <td><a href="{{ url_for('invoice_view', invoice_id=inv.id) }}" class="link-gold">#{{ inv.invoice_number }}</a></td>
+          <td>{{ inv.client.company_name }}</td>
+          <td class="td-amount">{{ fmt(inv.total_amount) }}</td>
+          <td class="td-muted">{{ inv.paid_at.strftime('%d.%m.%Y') if inv.paid_at else '—' }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endif %}
+
+<!-- ─── QUICK ACTIONS ─────────────────────────────────────────────────────── -->
+<section class="section">
+  <div class="section-header">
+    <h2 class="section-title">Quick Actions</h2>
+  </div>
+  <div class="quick-actions">
+    <a href="{{ url_for('invoice_new') }}" class="quick-card">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="28" height="28">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/>
+      </svg>
+      <span>New Invoice</span>
+    </a>
+    <a href="{{ url_for('clients') }}" class="quick-card">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="28" height="28">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+        <circle cx="9" cy="7" r="4"/>
+        <line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/>
+      </svg>
+      <span>Add Client</span>
+    </a>
+    <a href="{{ url_for('invoices', status='draft') }}" class="quick-card">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="28" height="28">
+        <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+      </svg>
+      <span>View Drafts</span>
+      {% if draft_count > 0 %}<span class="badge">{{ draft_count }}</span>{% endif %}
+    </a>
+    <a href="{{ url_for('products') }}" class="quick-card">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="28" height="28">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/>
+      </svg>
+      <span>Services</span>
+    </a>
+  </div>
+</section>
+
+{% endblock %}

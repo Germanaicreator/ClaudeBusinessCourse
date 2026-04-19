@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Proposal Generator{% endblock %} — Limitless AI</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #07070e;
+      --surface: #0f0f1a;
+      --border:  #1e1e30;
+      --gold:    #c9a96e;
+      --gold-lt: #e0c48a;
+      --text:    #e8e8f0;
+      --muted:   #6b6b88;
+      --green:   #4caf7d;
+      --red:     #e05c5c;
+      --radius:  10px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Outfit', 'Segoe UI', system-ui, sans-serif;
+      font-size: 15px;
+      min-height: 100vh;
+    }
+
+    /* NAV */
+    nav {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px;
+      height: 58px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+    nav .brand {
+      color: var(--gold);
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: .04em;
+      text-decoration: none;
+      margin-right: auto;
+    }
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color .15s;
+    }
+    nav a:hover { color: var(--text); }
+
+    /* MAIN */
+    main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+
+    h1 { font-size: 26px; font-weight: 700; color: var(--gold); margin-bottom: 6px; }
+    h2 { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+    p  { line-height: 1.6; color: var(--muted); }
+
+    /* FLASHES */
+    .flash-list { list-style: none; margin-bottom: 24px; }
+    .flash-list li {
+      padding: 12px 16px;
+      border-radius: var(--radius);
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+    .flash-success { background: rgba(76,175,125,.15); border: 1px solid var(--green); color: var(--green); }
+    .flash-error   { background: rgba(224,92,92,.12);  border: 1px solid var(--red);   color: var(--red); }
+
+    /* CARDS */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin-bottom: 16px;
+    }
+
+    /* STATUS BADGE */
+    .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .badge-ok  { background: rgba(76,175,125,.15); color: var(--green); }
+    .badge-err { background: rgba(224,92,92,.12);  color: var(--red); }
+
+    /* BUTTONS */
+    .btn {
+      display: inline-block;
+      padding: 9px 18px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: opacity .15s;
+    }
+    .btn:hover { opacity: .85; }
+    .btn-gold  { background: var(--gold); color: #07070e; }
+    .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text); }
+
+    /* TABLE */
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--border); font-size: 14px; }
+    th { color: var(--muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(201,169,110,.04); }
+
+    /* MISC */
+    .subtitle { color: var(--muted); font-size: 14px; margin-bottom: 32px; }
+    .mt-32 { margin-top: 32px; }
+    .doc-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--gold);
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 600;
+      transition: border-color .15s;
+      margin-right: 16px;
+      margin-top: 16px;
+    }
+    .doc-link:hover { border-color: var(--gold); }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="brand" href="/">⚡ Proposal Generator</a>
+  <a href="/dashboard">Dashboard</a>
+  <a href="/trigger">Manual Trigger</a>
+  <a href="/auth/google">Re-auth Google</a>
+</nav>
+
+<main>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <ul class="flash-list">
+        {% for cat, msg in messages %}
+          <li class="flash-{{ cat }}">{{ msg }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  {% endwith %}
+
+  {% block content %}{% endblock %}
+</main>
+
+</body>
+</html>

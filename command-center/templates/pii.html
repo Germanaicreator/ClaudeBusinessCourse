@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>File Anonymizer — AI Experts</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant:wght@400;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #07070e; --bg2: #0c0c18; --bg3: #111120;
+      --bgcard: #0f0f1c; --bgcard2: #131325;
+      --border: rgba(255,255,255,0.07); --bordergold: rgba(201,169,110,0.22);
+      --text: #ede9df; --muted: rgba(237,233,223,0.52); --subtle: rgba(237,233,223,0.28);
+      --gold: #c9a96e; --goldlight: #dfbd84; --golddim: rgba(201,169,110,0.08);
+      --goldglow: rgba(201,169,110,0.18);
+      --green: #3da870; --greendim: rgba(61,168,112,0.12);
+      --red: #e05555; --reddim: rgba(224,85,85,0.12);
+      --purple: #a07ef0; --purpledim: rgba(160,126,240,0.12);
+      --warn: #e09055; --warndim: rgba(224,144,85,0.12);
+      --sidebar-w: 268px; --r: 10px; --rl: 16px;
+      --ease: 0.22s cubic-bezier(0.4,0,0.2,1);
+    }
+    *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+    html { scroll-behavior:smooth; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: 'Outfit', sans-serif; font-size: 15px; line-height: 1.6;
+      overflow-x: hidden; -webkit-font-smoothing: antialiased;
+    }
+    a { color:inherit; text-decoration:none; }
+    button { cursor:pointer; font-family:'Outfit',sans-serif; }
+    ::-webkit-scrollbar { width:5px; }
+    ::-webkit-scrollbar-track { background:var(--bg); }
+    ::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.1); border-radius:3px; }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      position: fixed; top:0; left:0; bottom:0;
+      width: var(--sidebar-w);
+      background: var(--bg2); border-right: 1px solid var(--border);
+      display: flex; flex-direction: column; z-index: 200;
+    }
+    .sidebar-top {
+      padding: 22px 24px 18px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-back {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 0.76rem; color: var(--muted);
+      margin-bottom: 18px;
+      padding: 5px 8px; border-radius: 7px;
+      border: 1px solid var(--border);
+      width: fit-content;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .sidebar-back:hover { color: var(--text); border-color: var(--bordergold); }
+    .sidebar-logo-row { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
+    .sidebar-icon {
+      width: 38px; height: 38px;
+      background: var(--purpledim); border: 1px solid rgba(160,126,240,0.25);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .sidebar-icon svg { color: var(--purple); }
+    .sidebar-name { font-family: 'Cormorant', serif; font-size: 1.35rem; font-weight: 700; }
+    .sidebar-tagline { font-size: 0.76rem; color: var(--muted); line-height: 1.4; }
+
+    .sidebar-section { padding: 20px 20px 0; }
+    .sidebar-section-title {
+      font-size: 0.68rem; font-weight: 600;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--purple); margin-bottom: 10px;
+    }
+    .strip-list { display: flex; flex-direction: column; gap: 5px; }
+    .strip-item { display: flex; align-items: center; gap: 8px; font-size: 0.82rem; color: var(--muted); }
+    .strip-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--purple); opacity: 0.6; flex-shrink: 0; }
+
+    .sidebar-formats { padding: 18px 20px 0; }
+    .format-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+    .chip {
+      background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+      border-radius: 5px; padding: 2px 8px;
+      font-size: 0.72rem; color: var(--muted); font-family: 'Courier New', monospace;
+    }
+    .sidebar-bottom {
+      margin-top: auto; padding: 16px 20px;
+      border-top: 1px solid var(--border);
+      font-size: 0.72rem; color: var(--subtle);
+    }
+
+    /* ── Main ── */
+    .main { margin-left: var(--sidebar-w); min-height: 100vh; display: flex; flex-direction: column; }
+
+    /* ── Topbar ── */
+    .topbar {
+      display: flex; align-items: center; gap: 16px;
+      padding: 0 36px; height: 64px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .topbar-title { flex: 1; font-family: 'Cormorant', serif; font-size: 1.5rem; font-weight: 600; }
+    .topbar-badge {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 0.75rem; color: var(--muted);
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border); border-radius: 20px; padding: 4px 12px;
+    }
+    .topbar-badge span { color: var(--green); font-size: 0.9rem; }
+
+    /* ── Content ── */
+    .content { flex: 1; padding: 32px 36px 60px; max-width: 1100px; width: 100%; }
+
+    /* ── Alert ── */
+    .alert-warn {
+      display: flex; align-items: flex-start; gap: 12px;
+      background: var(--warndim); border: 1px solid rgba(224,144,85,0.3);
+      border-radius: var(--r); padding: 14px 18px; margin-bottom: 28px;
+      font-size: 0.875rem; color: var(--warn);
+    }
+    .alert-warn svg { flex-shrink: 0; margin-top: 1px; }
+    .alert-warn code { background: rgba(224,144,85,0.15); padding: 1px 6px; border-radius: 4px; font-size: 0.82rem; font-family: 'Courier New', monospace; }
+
+    /* ── Card ── */
+    .card { background: var(--bgcard); border: 1px solid var(--border); border-radius: var(--rl); padding: 28px; margin-bottom: 20px; }
+    .card-title { font-family: 'Cormorant', serif; font-size: 1.15rem; font-weight: 600; margin-bottom: 6px; }
+    .card-sub { font-size: 0.82rem; color: var(--muted); margin-bottom: 22px; }
+
+    /* ── Drop Zone ── */
+    .drop-zone {
+      border: 2px dashed rgba(160,126,240,0.25); border-radius: var(--rl);
+      background: rgba(160,126,240,0.04); padding: 52px 24px; text-align: center;
+      cursor: pointer; transition: border-color var(--ease), background var(--ease); position: relative;
+    }
+    .drop-zone:hover, .drop-zone.drag-over { border-color: var(--purple); background: rgba(160,126,240,0.09); }
+    .drop-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+    .drop-icon {
+      width: 52px; height: 52px; margin: 0 auto 14px;
+      background: rgba(160,126,240,0.1); border: 1px solid rgba(160,126,240,0.25);
+      border-radius: 14px; display: flex; align-items: center; justify-content: center; color: var(--purple);
+    }
+    .drop-title { font-size: 1rem; font-weight: 600; margin-bottom: 5px; }
+    .drop-sub { font-size: 0.82rem; color: var(--muted); }
+    .drop-purple { color: var(--purple); }
+
+    /* ── File List ── */
+    .file-list { display: flex; flex-direction: column; gap: 8px; margin-top: 18px; }
+    .file-item {
+      display: flex; align-items: center; gap: 12px;
+      background: var(--bgcard2); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 11px 16px;
+    }
+    .file-icon {
+      width: 34px; height: 34px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.04em; flex-shrink: 0;
+    }
+    .file-icon.pdf  { background: rgba(224,85,85,0.15);   color: var(--red);  border: 1px solid rgba(224,85,85,0.25); }
+    .file-icon.docx { background: rgba(90,156,248,0.12);  color: #5a9cf8;     border: 1px solid rgba(90,156,248,0.22); }
+    .file-icon.pptx { background: var(--warndim);         color: var(--warn); border: 1px solid rgba(224,144,85,0.22); }
+    .file-icon.xlsx { background: var(--greendim);        color: var(--green);border: 1px solid rgba(61,168,112,0.22); }
+    .file-icon.txt  { background: rgba(255,255,255,0.06); color: var(--muted);border: 1px solid var(--border); }
+    .file-icon.other{ background: rgba(255,255,255,0.06); color: var(--muted);border: 1px solid var(--border); }
+    .file-info { flex: 1; min-width: 0; }
+    .file-name { font-size: 0.875rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .file-size { font-size: 0.75rem; color: var(--muted); }
+    .file-remove { background: none; border: none; color: var(--subtle); font-size: 1rem; padding: 4px 6px; border-radius: 4px; transition: color var(--ease), background var(--ease); flex-shrink: 0; }
+    .file-remove:hover { color: var(--red); background: var(--reddim); }
+
+    /* ── Actions ── */
+    .upload-actions { display: flex; align-items: center; gap: 10px; margin-top: 20px; }
+    .btn { display: inline-flex; align-items: center; gap: 7px; padding: 10px 20px; border-radius: var(--r); font-size: 0.9rem; font-weight: 500; border: 1px solid transparent; transition: all var(--ease); cursor: pointer; }
+    .btn-purple { background: linear-gradient(135deg, var(--purple), #b890f8); color: #07070e; font-weight: 600; }
+    .btn-purple:hover { opacity: 0.88; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(160,126,240,0.3); }
+    .btn-purple:disabled { opacity: 0.45; cursor: not-allowed; transform: none; box-shadow: none; }
+    .btn-ghost { background: rgba(255,255,255,0.05); border-color: var(--border); color: var(--text); }
+    .btn-ghost:hover { background: rgba(255,255,255,0.09); }
+    .btn-green { background: var(--greendim); border-color: rgba(61,168,112,0.3); color: var(--green); }
+    .btn-green:hover { background: rgba(61,168,112,0.2); }
+    .btn-lg { padding: 13px 28px; font-size: 1rem; }
+    .file-count-label { font-size: 0.82rem; color: var(--muted); }
+
+    /* ── Progress ── */
+    #section-progress { display: none; }
+    #section-results  { display: none; }
+    .progress-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+    .progress-spinner { width: 22px; height: 22px; border: 2px solid rgba(160,126,240,0.2); border-top-color: var(--purple); border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .progress-title { font-family: 'Cormorant', serif; font-size: 1.15rem; font-weight: 600; }
+    .progress-sub { font-size: 0.82rem; color: var(--muted); }
+    .overall-bar-wrap { background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: var(--rl); padding: 20px 22px; margin-bottom: 20px; }
+    .bar-label-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .bar-label { font-size: 0.82rem; color: var(--muted); font-weight: 500; }
+    .bar-count { font-size: 0.82rem; color: var(--purple); font-weight: 600; }
+    .bar-track { height: 6px; background: rgba(255,255,255,0.07); border-radius: 3px; overflow: hidden; }
+    .bar-fill { height: 100%; background: linear-gradient(90deg, var(--purple), #b890f8); border-radius: 3px; transition: width 0.4s ease; width: 0%; }
+    .current-file-row { margin-top: 10px; font-size: 0.79rem; color: var(--subtle); }
+    .current-file-name { color: var(--muted); }
+    .file-status-list { display: flex; flex-direction: column; gap: 8px; }
+    .file-status-item { display: flex; align-items: center; gap: 12px; background: var(--bgcard2); border: 1px solid var(--border); border-radius: var(--r); padding: 12px 16px; }
+    .file-status-icon { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .fsi-pending { background: rgba(255,255,255,0.05); color: var(--subtle); }
+    .fsi-active  { background: var(--purpledim); color: var(--purple); border: 1px solid rgba(160,126,240,0.28); }
+    .fsi-done    { background: var(--greendim); color: var(--green); border: 1px solid rgba(61,168,112,0.28); }
+    .fsi-error   { background: var(--reddim);   color: var(--red);   border: 1px solid rgba(224,85,85,0.28); }
+    .file-status-name { flex: 1; font-size: 0.875rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .file-status-label { font-size: 0.72rem; padding: 2px 8px; border-radius: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; flex-shrink: 0; }
+    .fsl-pending { background: rgba(255,255,255,0.06); color: var(--subtle); }
+    .fsl-active  { background: var(--purpledim); color: var(--purple); }
+    .fsl-done    { background: var(--greendim); color: var(--green); }
+    .fsl-error   { background: var(--reddim); color: var(--red); }
+    .mini-spin { width: 14px; height: 14px; border: 2px solid rgba(160,126,240,0.25); border-top-color: var(--purple); border-radius: 50%; animation: spin 0.7s linear infinite; }
+
+    /* ── Results ── */
+    .results-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+    .check-circle { width: 36px; height: 36px; background: var(--greendim); border: 1px solid rgba(61,168,112,0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--green); flex-shrink: 0; }
+    .results-title { font-family: 'Cormorant', serif; font-size: 1.15rem; font-weight: 600; }
+    .results-sub { font-size: 0.82rem; color: var(--muted); }
+    .result-file-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+    .result-file-item { display: flex; align-items: center; gap: 12px; background: var(--bgcard2); border: 1px solid var(--border); border-radius: var(--r); padding: 12px 16px; }
+    .result-pdf-icon { width: 34px; height: 34px; background: var(--greendim); border: 1px solid rgba(61,168,112,0.25); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--green); flex-shrink: 0; }
+    .result-file-name { flex: 1; font-size: 0.875rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .result-source { font-size: 0.75rem; color: var(--subtle); }
+    .btn-dl { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 7px; font-size: 0.8rem; font-weight: 500; color: var(--muted); transition: all var(--ease); flex-shrink: 0; }
+    .btn-dl:hover { background: var(--greendim); border-color: rgba(61,168,112,0.3); color: var(--green); }
+    .results-actions { display: flex; align-items: center; gap: 10px; padding-top: 4px; }
+    .error-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+    .error-item { display: flex; align-items: flex-start; gap: 10px; background: var(--reddim); border: 1px solid rgba(224,85,85,0.25); border-radius: var(--r); padding: 10px 14px; font-size: 0.82rem; }
+    .error-item svg { color: var(--red); flex-shrink: 0; margin-top: 1px; }
+    .error-file { font-weight: 600; color: var(--text); }
+    .error-msg  { color: var(--muted); }
+
+    /* ── Stats row ── */
+    .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 24px; }
+    .stat-mini { background: var(--bgcard2); border: 1px solid var(--border); border-radius: var(--r); padding: 16px 18px; position: relative; overflow: hidden; }
+    .stat-mini::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--purple), transparent); opacity: 0.4; }
+    .stat-mini-label { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+    .stat-mini-val { font-family: 'Cormorant', serif; font-size: 1.7rem; font-weight: 700; color: var(--purple); }
+    .stat-mini-val.green { color: var(--green); }
+    .stat-mini-val.red   { color: var(--red); }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      :root { --sidebar-w: 0px; }
+      .sidebar { display: none; }
+      .main { margin-left: 0; }
+      .topbar { padding: 0 20px; }
+      .content { padding: 20px 16px 40px; }
+      .stats-row { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── Sidebar ─────────────────────────────────────────────────────────── -->
+<aside class="sidebar">
+  <div class="sidebar-top">
+    <a href="/" class="sidebar-back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12">
+        <polyline points="15,18 9,12 15,6"/>
+      </svg>
+      Command Center
+    </a>
+    <div class="sidebar-logo-row">
+      <div class="sidebar-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="20" height="20">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          <polyline points="9,12 11,14 15,10"/>
+        </svg>
+      </div>
+      <div class="sidebar-name">File Anonymizer</div>
+    </div>
+    <div class="sidebar-tagline">AI-powered PII removal for candidate documents</div>
+  </div>
+
+  <div class="sidebar-section" style="margin-top:20px;">
+    <div class="sidebar-section-title">What gets stripped</div>
+    <div class="strip-list">
+      <div class="strip-item"><span class="strip-dot"></span> Full names &amp; partial names</div>
+      <div class="strip-item"><span class="strip-dot"></span> Dates (birthdays, appointments)</div>
+      <div class="strip-item"><span class="strip-dot"></span> Phone numbers</div>
+      <div class="strip-item"><span class="strip-dot"></span> Email addresses</div>
+      <div class="strip-item"><span class="strip-dot"></span> Physical addresses</div>
+      <div class="strip-item"><span class="strip-dot"></span> Company names</div>
+      <div class="strip-item"><span class="strip-dot"></span> Schools &amp; universities</div>
+    </div>
+  </div>
+
+  <div class="sidebar-formats">
+    <div class="sidebar-section-title">Supported formats</div>
+    <div class="format-chips">
+      <span class="chip">PDF</span><span class="chip">DOCX</span><span class="chip">PPTX</span>
+      <span class="chip">XLSX</span><span class="chip">TXT</span><span class="chip">CSV</span>
+      <span class="chip">RTF</span><span class="chip">MD</span><span class="chip">HTML</span><span class="chip">JSON</span>
+    </div>
+  </div>
+
+  <div class="sidebar-bottom">
+    Output: individual PDFs with <code style="font-family:'Courier New',monospace;font-size:0.72rem;color:var(--purple)">_cleaned</code> suffix
+  </div>
+</aside>
+
+<!-- ─── Main ─────────────────────────────────────────────────────────────── -->
+<div class="main">
+
+  <div class="topbar">
+    <div class="topbar-title">Document Anonymizer</div>
+    <div class="topbar-badge">
+      <span>●</span> Azure GPT-4o mini
+    </div>
+  </div>
+
+  <div class="content">
+
+    {% if not config_ok %}
+    <div class="alert-warn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+        <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+      </svg>
+      <div>
+        <strong>Azure OpenAI not configured.</strong> Add credentials to <code>.env</code>:<br>
+        <code>AZURE_OPENAI_API_KEY</code>, <code>AZURE_OPENAI_ENDPOINT</code>,
+        <code>AZURE_OPENAI_DEPLOYMENT</code>, <code>AZURE_OPENAI_API_VERSION</code>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- ── Upload ── -->
+    <div id="section-upload">
+      <div class="card">
+        <div class="card-title">Upload Documents</div>
+        <div class="card-sub">Drag &amp; drop files or click to browse. Mixed file types supported.</div>
+        <div class="drop-zone" id="dropZone">
+          <input type="file" id="fileInput" multiple
+                 accept=".pdf,.docx,.pptx,.xlsx,.txt,.csv,.rtf,.md,.html,.htm,.json,.xml,.log"/>
+          <div class="drop-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="26" height="26">
+              <polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/>
+              <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/>
+            </svg>
+          </div>
+          <div class="drop-title">Drop files here or <span class="drop-purple">browse</span></div>
+          <div class="drop-sub">PDF, DOCX, PPTX, XLSX, TXT, CSV, RTF and more</div>
+        </div>
+        <div class="file-list" id="fileList"></div>
+        <div class="upload-actions" id="uploadActions" style="display:none;">
+          <button class="btn btn-purple btn-lg" id="btnClean" onclick="startCleaning()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="17" height="17">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <polyline points="9,12 11,14 15,10"/>
+            </svg>
+            Clean Documents
+          </button>
+          <button class="btn btn-ghost" onclick="clearFiles()">Clear all</button>
+          <span class="file-count-label" id="fileCountLabel"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Progress ── -->
+    <div id="section-progress">
+      <div class="card">
+        <div class="progress-header">
+          <div class="progress-spinner" id="mainSpinner"></div>
+          <div>
+            <div class="progress-title">Anonymizing Documents…</div>
+            <div class="progress-sub" id="progressSub">Preparing files…</div>
+          </div>
+        </div>
+        <div class="overall-bar-wrap">
+          <div class="bar-label-row">
+            <span class="bar-label">Overall Progress</span>
+            <span class="bar-count" id="barCount">0 / 0</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill" id="barFill"></div></div>
+          <div class="current-file-row">Processing: <span class="current-file-name" id="currentFileName">—</span></div>
+        </div>
+        <div class="file-status-list" id="fileStatusList"></div>
+      </div>
+    </div>
+
+    <!-- ── Results ── -->
+    <div id="section-results">
+      <div class="stats-row" id="statsRow"></div>
+      <div class="card">
+        <div class="results-header">
+          <div class="check-circle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          </div>
+          <div>
+            <div class="results-title">Anonymization Complete</div>
+            <div class="results-sub" id="resultsSub">All files have been cleaned.</div>
+          </div>
+        </div>
+        <div class="error-list" id="errorList"></div>
+        <div class="result-file-list" id="resultFileList"></div>
+        <div class="results-actions">
+          <button class="btn btn-green btn-lg" id="btnZip" onclick="downloadZip()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="17" height="17">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            Download All as ZIP
+          </button>
+          <button class="btn btn-ghost" onclick="resetApp()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+              <polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.7"/>
+            </svg>
+            Process More Files
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<script>
+  // All API calls use /pii/ prefix since this is served under that path
+  const BASE = '/pii';
+
+  let selectedFiles = [];
+  let currentJobId  = null;
+  let pollTimer     = null;
+  let fileNames     = [];
+
+  function fileIconClass(name) {
+    const ext = name.split('.').pop().toLowerCase();
+    if (ext === 'pdf')  return 'pdf';
+    if (['docx','doc'].includes(ext)) return 'docx';
+    if (['pptx','ppt'].includes(ext)) return 'pptx';
+    if (['xlsx','xls'].includes(ext)) return 'xlsx';
+    if (['txt','csv','md','log'].includes(ext)) return 'txt';
+    return 'other';
+  }
+  function fileIconLabel(name) {
+    const ext = name.split('.').pop().toUpperCase();
+    return ext.length > 4 ? ext.slice(0,4) : ext;
+  }
+  function formatBytes(bytes) {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024*1024) return (bytes/1024).toFixed(1) + ' KB';
+    return (bytes/(1024*1024)).toFixed(1) + ' MB';
+  }
+
+  const dropZone  = document.getElementById('dropZone');
+  const fileInput = document.getElementById('fileInput');
+  dropZone.addEventListener('dragover',  e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+  dropZone.addEventListener('drop', e => {
+    e.preventDefault(); dropZone.classList.remove('drag-over');
+    addFiles(Array.from(e.dataTransfer.files));
+  });
+  fileInput.addEventListener('change', () => { addFiles(Array.from(fileInput.files)); fileInput.value = ''; });
+
+  function addFiles(files) {
+    const existing = new Set(selectedFiles.map(f => f.name + f.size));
+    files.forEach(f => { if (!existing.has(f.name + f.size)) selectedFiles.push(f); });
+    renderFileList();
+  }
+  function renderFileList() {
+    const list = document.getElementById('fileList');
+    const actions = document.getElementById('uploadActions');
+    const label   = document.getElementById('fileCountLabel');
+    list.innerHTML = '';
+    if (!selectedFiles.length) { actions.style.display = 'none'; return; }
+    selectedFiles.forEach((f, i) => {
+      const cls = fileIconClass(f.name);
+      const lbl = fileIconLabel(f.name);
+      const div = document.createElement('div');
+      div.className = 'file-item';
+      div.innerHTML = `
+        <div class="file-icon ${cls}">${lbl}</div>
+        <div class="file-info">
+          <div class="file-name" title="${f.name}">${f.name}</div>
+          <div class="file-size">${formatBytes(f.size)}</div>
+        </div>
+        <button class="file-remove" onclick="removeFile(${i})" title="Remove">✕</button>`;
+      list.appendChild(div);
+    });
+    actions.style.display = 'flex';
+    const n = selectedFiles.length;
+    label.textContent = n === 1 ? '1 file selected' : `${n} files selected`;
+  }
+  function removeFile(idx) { selectedFiles.splice(idx, 1); renderFileList(); }
+  function clearFiles() { selectedFiles = []; renderFileList(); }
+
+  function buildProgressList(names) {
+    const list = document.getElementById('fileStatusList');
+    list.innerHTML = '';
+    names.forEach(name => {
+      const div = document.createElement('div');
+      div.className = 'file-status-item';
+      div.id = 'fsi-' + CSS.escape(name);
+      div.innerHTML = `
+        <div class="file-status-icon fsi-pending" id="fsicon-${CSS.escape(name)}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13">
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+        </div>
+        <span class="file-status-name" title="${name}">${name}</span>
+        <span class="file-status-label fsl-pending" id="fslabel-${CSS.escape(name)}">Queued</span>`;
+      list.appendChild(div);
+    });
+  }
+  function setFileStatus(name, state) {
+    const iconEl  = document.getElementById('fsicon-' + CSS.escape(name));
+    const labelEl = document.getElementById('fslabel-' + CSS.escape(name));
+    if (!iconEl || !labelEl) return;
+    iconEl.className  = `file-status-icon fsi-${state}`;
+    labelEl.className = `file-status-label fsl-${state}`;
+    if (state === 'active') {
+      iconEl.innerHTML = `<div class="mini-spin"></div>`;
+      labelEl.textContent = 'Processing';
+    } else if (state === 'done') {
+      iconEl.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><polyline points="20 6 9 17 4 12"/></svg>`;
+      labelEl.textContent = 'Done';
+    } else if (state === 'error') {
+      iconEl.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`;
+      labelEl.textContent = 'Error';
+    }
+  }
+
+  async function startCleaning() {
+    if (!selectedFiles.length) return;
+    fileNames = selectedFiles.map(f => f.name);
+    document.getElementById('section-upload').style.display   = 'none';
+    document.getElementById('section-progress').style.display = 'block';
+    document.getElementById('section-results').style.display  = 'none';
+    document.getElementById('barFill').style.width  = '0%';
+    document.getElementById('barCount').textContent = `0 / ${fileNames.length}`;
+    document.getElementById('progressSub').textContent   = 'Uploading files…';
+    document.getElementById('currentFileName').textContent = '—';
+    buildProgressList(fileNames);
+
+    const form = new FormData();
+    selectedFiles.forEach(f => form.append('files', f));
+    let jobId;
+    try {
+      const resp = await fetch(BASE + '/process', { method: 'POST', body: form });
+      const data = await resp.json();
+      if (data.error) throw new Error(data.error);
+      jobId = data.job_id;
+      currentJobId = jobId;
+    } catch (err) {
+      alert('Upload failed: ' + err.message);
+      resetApp(); return;
+    }
+    document.getElementById('progressSub').textContent = 'Sending to Azure OpenAI…';
+    startPolling(jobId);
+  }
+
+  function startPolling(jobId) {
+    const seenOutputs = new Set();
+    const seenErrors  = new Set();
+    pollTimer = setInterval(async () => {
+      try {
+        const resp = await fetch(BASE + '/status/' + jobId);
+        const job  = await resp.json();
+        const done  = job.done  || 0;
+        const total = job.total || fileNames.length;
+        const pct   = total > 0 ? Math.round((done / total) * 100) : 0;
+        document.getElementById('barFill').style.width       = pct + '%';
+        document.getElementById('barCount').textContent      = `${done} / ${total}`;
+        document.getElementById('currentFileName').textContent = job.current_file || '—';
+        document.getElementById('progressSub').textContent   =
+          job.status === 'processing' ? `Processing file ${done + 1} of ${total}…` : 'Finishing up…';
+        if (job.current_file) setFileStatus(job.current_file, 'active');
+        (job.outputs || []).forEach(out => {
+          if (!seenOutputs.has(out.source)) { seenOutputs.add(out.source); setFileStatus(out.source, 'done'); }
+        });
+        (job.errors || []).forEach(err => {
+          if (!seenErrors.has(err.file)) { seenErrors.add(err.file); setFileStatus(err.file, 'error'); }
+        });
+        if (job.status === 'done') {
+          clearInterval(pollTimer);
+          document.getElementById('barFill').style.width = '100%';
+          document.getElementById('barCount').textContent = `${total} / ${total}`;
+          showResults(job);
+        }
+      } catch (e) { /* keep polling */ }
+    }, 600);
+  }
+
+  function showResults(job) {
+    document.getElementById('section-progress').style.display = 'none';
+    document.getElementById('section-results').style.display  = 'block';
+    const outputs = job.outputs || [];
+    const errors  = job.errors  || [];
+    const total   = job.total   || 0;
+    document.getElementById('statsRow').innerHTML = `
+      <div class="stat-mini"><div class="stat-mini-label">Total Files</div><div class="stat-mini-val">${total}</div></div>
+      <div class="stat-mini"><div class="stat-mini-label">Cleaned</div><div class="stat-mini-val green">${outputs.length}</div></div>
+      <div class="stat-mini"><div class="stat-mini-label">Failed</div><div class="stat-mini-val ${errors.length > 0 ? 'red' : ''}">${errors.length}</div></div>`;
+    document.getElementById('resultsSub').textContent =
+      `${outputs.length} document${outputs.length !== 1 ? 's' : ''} anonymized.` +
+      (errors.length > 0 ? ` ${errors.length} failed.` : '');
+    const errList = document.getElementById('errorList');
+    errList.innerHTML = '';
+    errors.forEach(err => {
+      errList.innerHTML += `<div class="error-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+        <div><div class="error-file">${err.file}</div><div class="error-msg">${err.error}</div></div></div>`;
+    });
+    const resultList = document.getElementById('resultFileList');
+    resultList.innerHTML = '';
+    outputs.forEach(out => {
+      resultList.innerHTML += `<div class="result-file-item">
+        <div class="result-pdf-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+          </svg>
+        </div>
+        <div class="file-info">
+          <div class="result-file-name" title="${out.name}">${out.name}</div>
+          <div class="result-source">from: ${out.source}</div>
+        </div>
+        <a href="${BASE}/download/${currentJobId}/${encodeURIComponent(out.name)}"
+           download="${out.name}" class="btn-dl">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Download
+        </a></div>`;
+    });
+    if (outputs.length > 0) setTimeout(() => autoDownloadZip(), 800);
+  }
+
+  function autoDownloadZip() {
+    if (!currentJobId) return;
+    const a = document.createElement('a');
+    a.href = `${BASE}/download-zip/${currentJobId}`;
+    a.download = 'cleaned_documents.zip';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  }
+  function downloadZip() { autoDownloadZip(); }
+  function resetApp() {
+    if (pollTimer) clearInterval(pollTimer);
+    currentJobId = null; selectedFiles = []; fileNames = [];
+    renderFileList();
+    document.getElementById('section-upload').style.display   = 'block';
+    document.getElementById('section-progress').style.display = 'none';
+    document.getElementById('section-results').style.display  = 'none';
+  }
+</script>
+</body>
+</html>

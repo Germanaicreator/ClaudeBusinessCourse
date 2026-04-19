@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}Result{% endblock %}
+
+{% block content %}
+
+{% if error %}
+  <h1 style="color:var(--red);">Something went wrong</h1>
+  <div class="card" style="border-color:var(--red);margin-top:24px;">
+    <pre style="color:var(--red);white-space:pre-wrap;font-size:13px;">{{ error }}</pre>
+  </div>
+  <div style="margin-top:24px;">
+    <a href="/trigger" class="btn btn-ghost">← Back to trigger</a>
+  </div>
+
+{% elif result %}
+  <h1>Documents Created</h1>
+  <p class="subtitle">
+    Meeting: <strong style="color:var(--text);">{{ result.title or result.meeting_id }}</strong>
+    {% if result.date %} · {{ result.date }}{% endif %}
+  </p>
+
+  <!-- Doc links -->
+  {% if result.docs and not result.docs.get('error') %}
+    <div style="margin-top:8px;">
+      <a href="{{ result.docs.offer_url }}" target="_blank" class="doc-link">
+        📧 Offer Email
+        <span style="font-size:11px;color:var(--muted);font-weight:400;">Open in Google Docs →</span>
+      </a>
+      <a href="{{ result.docs.contract_url }}" target="_blank" class="doc-link">
+        📄 Contract
+        <span style="font-size:11px;color:var(--muted);font-weight:400;">Open in Google Docs →</span>
+      </a>
+    </div>
+  {% else %}
+    <div class="card" style="border-color:var(--red);margin-top:16px;">
+      <p style="color:var(--red);">Google Docs could not be created:
+        {{ result.docs.get('error') if result.docs else 'unknown error' }}
+      </p>
+      {% if result.docs and result.docs.get('error') == 'not_authenticated' %}
+        <div style="margin-top:12px;">
+          <a href="/auth/google" class="btn btn-gold">Connect Google Account</a>
+        </div>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  <!-- Generated content preview -->
+  {% set d = result.doc_data %}
+  {% if d %}
+  <div style="display:flex;gap:16px;margin-top:32px;flex-wrap:wrap;">
+
+    <!-- Client info -->
+    <div class="card" style="flex:1;min-width:240px;">
+      <div style="font-size:12px;color:var(--muted);text-transform:uppercase;
+                  letter-spacing:.06em;margin-bottom:12px;">Client Detected</div>
+      <p style="color:var(--text);font-size:14px;line-height:1.8;">
+        <strong>{{ d.client_first_name }} {{ d.client_last_name }}</strong><br>
+        {{ d.client_company or '—' }}<br>
+        <span style="color:var(--muted);">{{ d.client_street or '' }}</span><br>
+        <span style="color:var(--muted);">{{ d.client_city_zip_country or '' }}</span>
+      </p>
+    </div>
+
+    <!-- Language / subject -->
+    <div class="card" style="flex:1;min-width:240px;">
+      <div style="font-size:12px;color:var(--muted);text-transform:uppercase;
+                  letter-spacing:.06em;margin-bottom:12px;">Email Subject</div>
+      <p style="color:var(--text);font-size:14px;">{{ d.email_subject or '—' }}</p>
+      <div style="margin-top:12px;">
+        <span class="badge" style="background:rgba(201,169,110,.12);color:var(--gold);">
+          🌐 {{ 'German' if d.language == 'de' else 'English' }}
+        </span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Email preview -->
+  <div class="card mt-32">
+    <div style="font-size:12px;color:var(--muted);text-transform:uppercase;
+                letter-spacing:.06em;margin-bottom:14px;">Offer Email Preview</div>
+    <pre style="white-space:pre-wrap;font-size:13px;line-height:1.7;color:var(--text);
+                font-family:'Outfit','Segoe UI',sans-serif;">{{ d.email_body }}</pre>
+  </div>
+  {% endif %}
+
+  <div style="margin-top:32px;">
+    <a href="/trigger" class="btn btn-ghost">← Process another</a>
+    <a href="/dashboard" class="btn btn-ghost" style="margin-left:12px;">Dashboard</a>
+  </div>
+{% endif %}
+
+{% endblock %}

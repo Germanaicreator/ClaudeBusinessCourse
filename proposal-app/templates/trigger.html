@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Manual Trigger{% endblock %}
+
+{% block content %}
+<h1>Manual Trigger</h1>
+<p class="subtitle">Pick any existing Fireflies transcript and generate the documents without waiting for a webhook.</p>
+
+{% if error %}
+  <div class="card" style="border-color:var(--red);margin-bottom:24px;">
+    <p style="color:var(--red);">{{ error }}</p>
+  </div>
+{% endif %}
+
+{% if transcripts %}
+  <div class="card" style="padding:0;overflow:hidden;">
+    <table>
+      <thead>
+        <tr>
+          <th>Meeting</th>
+          <th>Date</th>
+          <th>Organizer</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for t in transcripts %}
+        <tr>
+          <td>
+            <strong style="color:var(--text);">{{ t.title or '(no title)' }}</strong>
+            {% if t.summary and t.summary.overview %}
+              <div style="color:var(--muted);font-size:12px;margin-top:3px;max-width:380px;
+                          overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+                {{ t.summary.overview[:100] }}
+              </div>
+            {% endif %}
+          </td>
+          <td style="white-space:nowrap;color:var(--muted);">{{ t.date or '—' }}</td>
+          <td style="color:var(--muted);font-size:13px;">{{ t.organizer_email or '—' }}</td>
+          <td style="text-align:right;">
+            <a href="/trigger/{{ t.id }}"
+               class="btn btn-gold"
+               style="font-size:13px;padding:7px 14px;"
+               onclick="this.textContent='⏳ Working…';this.style.opacity='.6';return true;">
+              Generate
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% else %}
+  <div class="card">
+    <p>No transcripts available yet.</p>
+  </div>
+{% endif %}
+
+<!-- Direct ID form -->
+<div class="card mt-32">
+  <h2 style="font-size:15px;margin-bottom:14px;">Enter a specific Meeting ID</h2>
+  <form method="GET" action="" id="id-form"
+        onsubmit="window.location='/trigger/'+document.getElementById('mid').value.trim();return false;"
+        style="display:flex;gap:12px;align-items:center;">
+    <input id="mid" type="text" placeholder="e.g. ASxwZxCstx"
+           style="flex:1;padding:9px 14px;background:var(--bg);border:1px solid var(--border);
+                  border-radius:8px;color:var(--text);font-size:14px;outline:none;">
+    <button type="submit" class="btn btn-gold">Run</button>
+  </form>
+</div>
+{% endblock %}

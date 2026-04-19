@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% block title %}Invoices — AI Experts{% endblock %}
+{% block page_title %}Invoices{% endblock %}
+
+{% block topbar_actions %}
+<a href="{{ url_for('invoice_new') }}" class="btn btn-gold btn-sm">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="14" height="14">
+    <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+  </svg>
+  New Invoice
+</a>
+{% endblock %}
+
+{% block content %}
+
+<!-- ─── FILTER TABS ───────────────────────────────────────────────────────── -->
+<div class="tab-bar">
+  <a href="{{ url_for('invoices', status='all') }}"
+     class="tab {% if status_filter == 'all' %}active{% endif %}">All</a>
+  <a href="{{ url_for('invoices', status='draft') }}"
+     class="tab {% if status_filter == 'draft' %}active{% endif %}">Drafts</a>
+  <a href="{{ url_for('invoices', status='sent') }}"
+     class="tab {% if status_filter == 'sent' %}active{% endif %}">Sent</a>
+  <a href="{{ url_for('invoices', status='paid') }}"
+     class="tab {% if status_filter == 'paid' %}active{% endif %}">Paid</a>
+</div>
+
+{% if invoices %}
+<div class="card table-card">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Invoice #</th>
+        <th>Client</th>
+        <th>Date</th>
+        <th>Amount</th>
+        <th>Status</th>
+        <th>Sent / Paid</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for inv in invoices %}
+      <tr>
+        <td>
+          <a href="{{ url_for('invoice_view', invoice_id=inv.id) }}" class="link-gold">
+            #{{ inv.invoice_number }}
+          </a>
+        </td>
+        <td>{{ inv.client.company_name }}</td>
+        <td class="td-muted">{{ inv.invoice_date.strftime('%d.%m.%Y') }}</td>
+        <td class="td-amount">{{ fmt(inv.total_amount) }}</td>
+        <td>
+          {% if inv.status == 'draft' %}
+            {% if inv.has_pdf %}
+            <span class="status-badge status-ready">Ready</span>
+            {% else %}
+            <span class="status-badge status-draft">Draft</span>
+            {% endif %}
+          {% elif inv.status == 'sent' %}
+            <span class="status-badge status-sent">Sent</span>
+          {% elif inv.status == 'paid' %}
+            <span class="status-badge status-paid">Paid</span>
+          {% endif %}
+        </td>
+        <td class="td-muted">
+          {% if inv.status == 'paid' and inv.paid_at %}
+            {{ inv.paid_at.strftime('%d.%m.%Y') }}
+          {% elif inv.sent_at %}
+            {{ inv.sent_at.strftime('%d.%m.%Y') }}
+          {% else %}
+            —
+          {% endif %}
+        </td>
+        <td>
+          <div class="action-row">
+            <a href="{{ url_for('invoice_view', invoice_id=inv.id) }}" class="btn btn-ghost btn-xs">View</a>
+            {% if inv.has_pdf %}
+            <a href="{{ url_for('invoice_download', invoice_id=inv.id) }}" class="btn btn-ghost btn-xs" title="Download">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
+            </a>
+            {% endif %}
+            {% if inv.status == 'sent' %}
+            <form method="POST" action="{{ url_for('mark_paid', invoice_id=inv.id) }}"
+                  onsubmit="return confirm('Mark #{{ inv.invoice_number }} as paid?')">
+              <button type="submit" class="btn btn-green btn-xs">Mark Paid</button>
+            </form>
+            {% endif %}
+            {% if inv.status == 'draft' %}
+            <a href="{{ url_for('invoice_edit', invoice_id=inv.id) }}" class="btn btn-ghost btn-xs">Edit</a>
+            <form method="POST" action="{{ url_for('invoice_delete', invoice_id=inv.id) }}"
+                  onsubmit="return confirm('Delete draft #{{ inv.invoice_number }}?')">
+              <button type="submit" class="btn btn-danger btn-xs">Delete</button>
+            </form>
+            {% endif %}
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="empty-state">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="44" height="44">
+    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+    <polyline points="14,2 14,8 20,8"/>
+  </svg>
+  <p>No invoices found{% if status_filter != 'all' %} with status "{{ status_filter }}"{% endif %}.</p>
+  <a href="{{ url_for('invoice_new') }}" class="btn btn-gold">Create Invoice</a>
+</div>
+{% endif %}
+
+{% endblock %}

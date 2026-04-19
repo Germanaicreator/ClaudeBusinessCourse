@@ -1,0 +1,264 @@
+{% extends "base.html" %}
+{% block title %}Invoice #{{ invoice.invoice_number }} — AI Experts{% endblock %}
+{% block page_title %}Invoice #{{ invoice.invoice_number }}{% endblock %}
+
+{% block topbar_actions %}
+<a href="{{ url_for('invoices') }}" class="btn btn-ghost btn-sm">← Invoices</a>
+{% endblock %}
+
+{% block content %}
+
+<div class="view-layout">
+
+  <!-- ─── LEFT: Invoice Details ─────────────────────────────────────────── -->
+  <div class="view-main">
+
+    <!-- Header Card -->
+    <div class="card invoice-header-card">
+      <div class="inv-header-top">
+        <div>
+          <div class="inv-number">#{{ invoice.invoice_number }}</div>
+          <div class="inv-client">{{ invoice.client.company_name }}</div>
+          <div class="inv-client-email">{{ invoice.client.email }}</div>
+        </div>
+        <div class="inv-status-block">
+          {% if invoice.status == 'draft' %}
+            {% if invoice.has_pdf %}
+            <span class="status-badge status-ready status-lg">Ready to Send</span>
+            {% else %}
+            <span class="status-badge status-draft status-lg">Draft</span>
+            {% endif %}
+          {% elif invoice.status == 'sent' %}
+            <span class="status-badge status-sent status-lg">Sent</span>
+            {% if invoice.sent_at %}<div class="inv-date-note">{{ invoice.sent_at.strftime('%d.%m.%Y') }}</div>{% endif %}
+          {% elif invoice.status == 'paid' %}
+            <span class="status-badge status-paid status-lg">Paid</span>
+            {% if invoice.paid_at %}<div class="inv-date-note">{{ invoice.paid_at.strftime('%d.%m.%Y') }}</div>{% endif %}
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="inv-meta-row">
+        <div class="inv-meta-item">
+          <span class="inv-meta-label">Invoice Date</span>
+          <span class="inv-meta-val">{{ invoice.invoice_date.strftime('%d.%m.%Y') }}</span>
+        </div>
+        {% if invoice.delivery_date %}
+        <div class="inv-meta-item">
+          <span class="inv-meta-label">Delivery Date</span>
+          <span class="inv-meta-val">{{ invoice.delivery_date.strftime('%d.%m.%Y') }}</span>
+        </div>
+        {% endif %}
+        <div class="inv-meta-item">
+          <span class="inv-meta-label">Client #</span>
+          <span class="inv-meta-val">{{ invoice.client.customer_number }}</span>
+        </div>
+        <div class="inv-meta-item">
+          <span class="inv-meta-label">Created</span>
+          <span class="inv-meta-val">{{ invoice.created_at.strftime('%d.%m.%Y') }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Line Items -->
+    <div class="card">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Description</th>
+            <th class="text-right">Amount</th>
+            <th class="text-right">VAT</th>
+            <th class="text-right">Unit Price</th>
+            <th class="text-right">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in invoice.items %}
+          <tr>
+            <td>{{ item.description }}</td>
+            <td class="text-right td-muted">{{ "%.2f"|format(item.amount) }}</td>
+            <td class="text-right td-muted">19%</td>
+            <td class="text-right td-muted">{{ fmt(item.price) }}</td>
+            <td class="text-right td-amount">{{ fmt(item.line_total) }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <!-- Totals -->
+      <div class="view-totals">
+        <div class="vtotal-row">
+          <span>Total (gross)</span>
+          <span class="vtotal-val">{{ fmt(invoice.total_amount) }}</span>
+        </div>
+        <div class="vtotal-row vtotal-vat">
+          <span>Incl. VAT 19%</span>
+          <span class="vtotal-val">{{ fmt(invoice.vat_amount) }}</span>
+        </div>
+        <div class="vtotal-row vtotal-grand">
+          <span>Invoice Total</span>
+          <span class="vtotal-val gold">{{ fmt(invoice.total_amount) }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Client Address -->
+    <div class="card card-sm">
+      <div class="card-title-small">Bill To</div>
+      <strong>{{ invoice.client.company_name }}</strong><br>
+      <span class="td-muted" style="white-space:pre-line">{{ invoice.client.address }}</span>
+    </div>
+
+  </div><!-- /view-main -->
+
+  <!-- ─── RIGHT: Actions ────────────────────────────────────────────────── -->
+  <div class="view-side">
+
+    <!-- Amount summary -->
+    <div class="card action-card">
+      <div class="action-total-label">Invoice Amount</div>
+      <div class="action-total-val">{{ fmt(invoice.total_amount) }}</div>
+      <div class="action-vat-note">incl. VAT 19%: {{ fmt(invoice.vat_amount) }}</div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="card action-card">
+      <h4 class="action-card-title">Actions</h4>
+
+      {% if invoice.has_pdf %}
+      <a href="{{ url_for('invoice_download', invoice_id=invoice.id) }}"
+         class="btn btn-ghost btn-full mb8">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        Download PDF
+      </a>
+      {% endif %}
+
+      {% if invoice.status == 'draft' %}
+        {% if invoice.has_pdf %}
+        <!-- Send Invoice -->
+        <button type="button" class="btn btn-gold btn-full mb8"
+                onclick="openModal('sendModal')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+            <line x1="22" y1="2" x2="11" y2="13"/>
+            <polygon points="22,2 15,22 11,13 2,9 22,2"/>
+          </svg>
+          Send Invoice
+        </button>
+        <!-- Regenerate PDF -->
+        <form method="POST" action="{{ url_for('invoice_regenerate_pdf', invoice_id=invoice.id) }}">
+          <button type="submit" class="btn btn-ghost btn-full mb8">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+              <polyline points="23,4 23,10 17,10"/>
+              <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+            </svg>
+            Regenerate PDF
+          </button>
+        </form>
+        {% else %}
+        <!-- Finalize (generate PDF) -->
+        <form method="POST" action="{{ url_for('invoice_regenerate_pdf', invoice_id=invoice.id) }}">
+          <button type="submit" class="btn btn-gold btn-full mb8">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14,2 14,8 20,8"/><polyline points="9,15 11,17 15,13"/>
+            </svg>
+            Finalize &amp; Generate PDF
+          </button>
+        </form>
+        {% endif %}
+
+        <a href="{{ url_for('invoice_edit', invoice_id=invoice.id) }}"
+           class="btn btn-ghost btn-full mb8">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+            <path d="M12 20h9"/>
+            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+          </svg>
+          Edit Invoice
+        </a>
+
+        <form method="POST" action="{{ url_for('invoice_delete', invoice_id=invoice.id) }}"
+              onsubmit="return confirm('Delete this draft invoice?')">
+          <button type="submit" class="btn btn-danger btn-full">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+              <polyline points="3,6 5,6 21,6"/>
+              <path d="M19 6l-1 14H6L5 6"/>
+            </svg>
+            Delete Draft
+          </button>
+        </form>
+
+      {% elif invoice.status == 'sent' %}
+        <form method="POST" action="{{ url_for('mark_paid', invoice_id=invoice.id) }}"
+              onsubmit="return confirm('Mark this invoice as paid?')">
+          <button type="submit" class="btn btn-green btn-full mb8">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+              <polyline points="20,6 9,17 4,12"/>
+            </svg>
+            Mark as Paid
+          </button>
+        </form>
+        <button type="button" class="btn btn-ghost btn-full" onclick="openModal('sendModal')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+            <line x1="22" y1="2" x2="11" y2="13"/>
+            <polygon points="22,2 15,22 11,13 2,9 22,2"/>
+          </svg>
+          Resend Email
+        </button>
+      {% endif %}
+    </div>
+
+    <!-- Email Preview (if set) -->
+    {% if invoice.email_subject %}
+    <div class="card card-sm">
+      <div class="card-title-small">Email</div>
+      <div class="email-preview-subject">{{ invoice.email_subject }}</div>
+      <div class="email-preview-to">To: {{ invoice.client.email }}</div>
+    </div>
+    {% endif %}
+
+  </div><!-- /view-side -->
+</div><!-- /view-layout -->
+
+
+<!-- ─── SEND MODAL ────────────────────────────────────────────────────────── -->
+<div class="modal-backdrop" id="sendModal">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <h3>Send Invoice #{{ invoice.invoice_number }}</h3>
+      <button class="modal-close" onclick="closeModal('sendModal')">&#x2715;</button>
+    </div>
+    <form method="POST" action="{{ url_for('invoice_send', invoice_id=invoice.id) }}">
+      <div class="send-preview-block">
+        <div class="send-preview-row">
+          <span class="send-preview-label">To</span>
+          <span class="send-preview-val">{{ invoice.client.email }}</span>
+        </div>
+        <div class="send-preview-row">
+          <span class="send-preview-label">Subject</span>
+          <span class="send-preview-val">Invoice {{ invoice.invoice_number }} — AI Experts</span>
+        </div>
+      </div>
+      <p class="modal-note">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+          <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+        </svg>
+        PDF attached: <strong>Invoice_{{ invoice.invoice_number }}.pdf</strong>
+      </p>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-ghost" onclick="closeModal('sendModal')">Cancel</button>
+        <button type="submit" class="btn btn-gold">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+            <line x1="22" y1="2" x2="11" y2="13"/>
+            <polygon points="22,2 15,22 11,13 2,9 22,2"/>
+          </svg>
+          Send Now
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

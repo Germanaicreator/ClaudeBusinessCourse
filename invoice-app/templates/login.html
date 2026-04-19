@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Experts — Login</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant:wght@400;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #07070e; --bg2: #0c0c18; --bgcard: #0f0f1c;
+      --border: rgba(255,255,255,0.07); --bordergold: rgba(201,169,110,0.28);
+      --text: #ede9df; --muted: rgba(237,233,223,0.56);
+      --gold: #c9a96e; --goldlight: #dfbd84; --golddim: rgba(201,169,110,0.08);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: 'Outfit', sans-serif; font-size: 16px;
+      display: flex; align-items: center; justify-content: center;
+      min-height: 100vh;
+    }
+    body::before {
+      content: ''; position: fixed; inset: 0; pointer-events: none;
+      background: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(201,169,110,0.06) 0%, transparent 70%);
+    }
+    .login-card {
+      background: var(--bgcard); border: 1px solid var(--bordergold);
+      border-radius: 20px; padding: 48px 40px; width: 100%; max-width: 420px;
+      position: relative; z-index: 1;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(201,169,110,0.08);
+    }
+    .login-logo {
+      display: block; margin: 0 auto 32px;
+      height: 52px; width: auto; object-fit: contain;
+    }
+    h1 {
+      font-family: 'Cormorant', serif; font-size: 1.9rem; font-weight: 600;
+      text-align: center; margin-bottom: 6px; letter-spacing: -0.02em;
+    }
+    .subtitle {
+      text-align: center; color: var(--muted); font-size: 0.875rem;
+      margin-bottom: 36px;
+    }
+    label {
+      display: block; font-size: 0.75rem; font-weight: 600;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 8px;
+    }
+    input[type="password"] {
+      width: 100%; background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border); border-radius: 10px;
+      color: var(--text); font-family: 'Outfit', sans-serif; font-size: 1rem;
+      padding: 13px 16px; outline: none; transition: border-color 0.2s;
+    }
+    input[type="password"]:focus { border-color: var(--gold); }
+    .error {
+      background: rgba(220,60,60,0.12); border: 1px solid rgba(220,60,60,0.3);
+      border-radius: 8px; padding: 10px 14px; margin-bottom: 20px;
+      font-size: 0.875rem; color: #f08080;
+    }
+    .btn-login {
+      width: 100%; margin-top: 20px;
+      background: linear-gradient(135deg, var(--gold), var(--goldlight));
+      border: none; border-radius: 10px; color: #07070e;
+      font-family: 'Outfit', sans-serif; font-size: 0.9rem; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 14px; cursor: pointer; transition: opacity 0.2s, transform 0.15s;
+    }
+    .btn-login:hover { opacity: 0.9; transform: translateY(-1px); }
+    .btn-login:active { transform: translateY(0); }
+    .footer-text {
+      text-align: center; font-size: 0.75rem; color: var(--muted);
+      margin-top: 28px;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-card">
+    <img src="{{ url_for('static', filename='logo.png') }}" alt="AI Experts" class="login-logo">
+    <h1>Invoice Dashboard</h1>
+    <p class="subtitle">AI Experts · Secure Access</p>
+
+    {% if error %}
+    <div class="error">{{ error }}</div>
+    {% endif %}
+
+    <form method="POST">
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password"
+             placeholder="Enter your password" autofocus required>
+      <button type="submit" class="btn-login">Sign In</button>
+    </form>
+
+    <p class="footer-text">AI Experts &copy; {{ 2026 }}</p>
+  </div>
+</body>
+</html>

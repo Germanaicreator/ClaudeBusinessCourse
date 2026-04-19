@@ -1,0 +1,20 @@
+[Unit]
+Description=AI Experts Business Command Center
+After=network.target
+
+[Service]
+User=www-data
+WorkingDirectory=/var/www/controlcenter
+EnvironmentFile=/var/www/controlcenter/.env
+ExecStart=/var/www/controlcenter/venv/bin/gunicorn \
+    --workers 2 \
+    --bind 127.0.0.1:5003 \
+    --timeout 300 \
+    --access-logfile /var/log/command-center-access.log \
+    --error-logfile /var/log/command-center-error.log \
+    app:app
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

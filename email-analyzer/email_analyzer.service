@@ -1,0 +1,21 @@
+[Unit]
+Description=AI Experts — Email Analyzer & Auto-Responder
+After=network-online.target
+Wants=network-online.target
+StartLimitIntervalSec=120
+StartLimitBurst=5
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/emailanalyzer
+ExecStart=/opt/emailanalyzer/venv/bin/python email_analyzer.py
+Restart=always
+RestartSec=15
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=email-analyzer
+
+
+[Install]
+WantedBy=multi-user.target

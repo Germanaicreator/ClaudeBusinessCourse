@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Business Command Center — AI Experts</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #07070e; --bg2: #0c0c18; --bgcard: #0f0f1c;
+      --border: rgba(255,255,255,0.07); --bordergold: rgba(201,169,110,0.28);
+      --text: #ede9df; --muted: rgba(237,233,223,0.56);
+      --gold: #c9a96e; --goldlight: #dfbd84; --golddim: rgba(201,169,110,0.08);
+      --goldglow: rgba(201,169,110,0.22);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: 'Outfit', sans-serif; font-size: 16px;
+      display: flex; align-items: center; justify-content: center;
+      min-height: 100vh; overflow: hidden;
+    }
+
+    /* Background radial glow */
+    body::before {
+      content: ''; position: fixed; inset: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% -10%, rgba(201,169,110,0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 30% at 20% 80%, rgba(201,169,110,0.04) 0%, transparent 50%);
+    }
+
+    /* Grid lines background */
+    body::after {
+      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background-image:
+        linear-gradient(rgba(201,169,110,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(201,169,110,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+
+    .wrap {
+      position: relative; z-index: 1;
+      width: 100%; max-width: 440px;
+      padding: 24px;
+    }
+
+    /* Brand row */
+    .brand {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .brand-icon {
+      width: 64px; height: 64px;
+      background: var(--golddim);
+      border: 1px solid var(--bordergold);
+      border-radius: 20px;
+      display: inline-flex; align-items: center; justify-content: center;
+      margin-bottom: 18px;
+      box-shadow: 0 0 40px var(--goldglow);
+    }
+    .brand-icon svg { color: var(--gold); }
+    .brand-title {
+      font-family: 'Cormorant', serif;
+      font-size: 2rem; font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .brand-sub {
+      font-size: 0.82rem; color: var(--muted);
+      letter-spacing: 0.1em; text-transform: uppercase;
+    }
+
+    /* Card */
+    .card {
+      background: var(--bgcard);
+      border: 1px solid var(--bordergold);
+      border-radius: 20px;
+      padding: 40px 36px;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(201,169,110,0.06);
+    }
+
+    .card-title {
+      font-family: 'Cormorant', serif;
+      font-size: 1.5rem; font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .card-sub {
+      font-size: 0.82rem; color: var(--muted);
+      margin-bottom: 28px;
+    }
+
+    label {
+      display: block; font-size: 0.72rem; font-weight: 600;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 8px;
+    }
+    input[type="password"] {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: 'Outfit', sans-serif; font-size: 1rem;
+      padding: 13px 16px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    input[type="password"]:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(201,169,110,0.1);
+    }
+    .error-msg {
+      background: rgba(220,60,60,0.1);
+      border: 1px solid rgba(220,60,60,0.28);
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-bottom: 18px;
+      font-size: 0.85rem;
+      color: #f08080;
+    }
+    .btn-login {
+      width: 100%; margin-top: 20px;
+      background: linear-gradient(135deg, var(--gold), var(--goldlight));
+      border: none; border-radius: 10px;
+      color: #07070e;
+      font-family: 'Outfit', sans-serif; font-size: 0.9rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 14px;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+    }
+    .btn-login:hover {
+      opacity: 0.9; transform: translateY(-1px);
+      box-shadow: 0 8px 24px var(--goldglow);
+    }
+    .btn-login:active { transform: translateY(0); }
+
+    .footer {
+      text-align: center; font-size: 0.72rem; color: var(--muted);
+      margin-top: 24px;
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="brand">
+    <div class="brand-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="28" height="28">
+        <rect x="2" y="3" width="7" height="7" rx="1.5"/>
+        <rect x="15" y="3" width="7" height="7" rx="1.5"/>
+        <rect x="2" y="14" width="7" height="7" rx="1.5"/>
+        <rect x="15" y="14" width="7" height="7" rx="1.5"/>
+      </svg>
+    </div>
+    <div class="brand-title">Command Center</div>
+    <div class="brand-sub">AI Experts · Secure Access</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Welcome back</div>
+    <p class="card-sub">Enter your password to access all systems.</p>
+
+    {% if error %}
+    <div class="error-msg">{{ error }}</div>
+    {% endif %}
+
+    <form method="POST">
+      <input type="hidden" name="next" value="{{ next }}">
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password"
+             placeholder="Enter your password" autofocus required>
+      <button type="submit" class="btn-login">Enter Command Center</button>
+    </form>
+  </div>
+
+  <p class="footer">AI Experts &copy; {{ 2026 }} &nbsp;·&nbsp; Business Command Center</p>
+</div>
+</body>
+</html>

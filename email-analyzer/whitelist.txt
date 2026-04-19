@@ -1,0 +1,11 @@
+# Email Analyzer — Whitelist
+# One address per line. Lines starting with # are comments.
+# These addresses are NEVER processed — all their emails are left completely untouched.
+
+# Dominik's own accounts
+YOUR_WORK_EMAIL
+YOUR_EMAIL
+
+# Add trusted contacts below, e.g.:
+# partner@somecompany.com
+# assistant@youragency.com

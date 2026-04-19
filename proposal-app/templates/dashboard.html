@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<h1>Proposal Generator</h1>
+<p class="subtitle">Automatically creates offer emails and contracts from Fireflies meeting transcripts.</p>
+
+<!-- Status row -->
+<div style="display:flex;gap:16px;margin-bottom:32px;flex-wrap:wrap;">
+
+  <div class="card" style="flex:1;min-width:220px;">
+    <div style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">Google Docs</div>
+    {% if auth_ok %}
+      <span class="badge badge-ok">✓ Connected</span>
+    {% else %}
+      <span class="badge badge-err">✗ Not connected</span>
+      <div style="margin-top:10px;">
+        <a href="/auth/google" class="btn btn-gold" style="font-size:13px;padding:7px 14px;">Connect Google</a>
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="card" style="flex:1;min-width:220px;">
+    <div style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">Webhook URL</div>
+    <code style="font-size:12px;color:var(--gold);word-break:break-all;">
+      https://proposals.rosalia-yachts.com/webhook/fireflies
+    </code>
+  </div>
+
+</div>
+
+<!-- Recent transcripts -->
+<h2>Recent Transcripts</h2>
+
+{% if error %}
+  <div class="card" style="border-color:var(--red);">
+    <p style="color:var(--red);">Could not load transcripts: {{ error }}</p>
+  </div>
+{% elif transcripts %}
+  <div class="card" style="padding:0;overflow:hidden;">
+    <table>
+      <thead>
+        <tr>
+          <th>Meeting</th>
+          <th>Date</th>
+          <th>Participants</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for t in transcripts %}
+        <tr>
+          <td>
+            <strong style="color:var(--text);">{{ t.title or '(no title)' }}</strong>
+            {% if t.summary and t.summary.overview %}
+              <div style="color:var(--muted);font-size:12px;margin-top:3px;max-width:400px;
+                          overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+                {{ t.summary.overview[:120] }}
+              </div>
+            {% endif %}
+          </td>
+          <td style="white-space:nowrap;color:var(--muted);">{{ t.date or '—' }}</td>
+          <td style="color:var(--muted);font-size:13px;">
+            {{ (t.participants or [])|join(', ')|truncate(60) }}
+          </td>
+          <td style="text-align:right;">
+            <a href="/trigger/{{ t.id }}" class="btn btn-gold"
+               style="font-size:13px;padding:7px 14px;"
+               onclick="return confirm('Process this transcript and create Google Docs?')">
+              Generate Docs
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% else %}
+  <div class="card">
+    <p>No transcripts found. Make sure your Fireflies API key is set correctly.</p>
+  </div>
+{% endif %}
+
+<!-- Instructions -->
+<div class="card mt-32" style="border-color:#2a2a40;">
+  <h2 style="font-size:15px;margin-bottom:12px;">How it works</h2>
+  <ol style="padding-left:20px;color:var(--muted);font-size:14px;line-height:2;">
+    <li>Fireflies sends a webhook when a meeting transcript is ready.</li>
+    <li>The app fetches the full transcript via the Fireflies GraphQL API.</li>
+    <li>GPT-4.1 analyzes the transcript and writes a proposal email + consulting contract.</li>
+    <li>Two Google Docs are created automatically and shared with your Drive.</li>
+  </ol>
+</div>
+{% endblock %}

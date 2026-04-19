@@ -1,0 +1,414 @@
+{% extends "base.html" %}
+{% set is_edit = invoice is not none %}
+{% block title %}{% if is_edit %}Edit Draft #{{ invoice.invoice_number }}{% else %}New Invoice{% endif %} — AI Experts{% endblock %}
+{% block page_title %}{% if is_edit %}Edit Invoice{% else %}New Invoice{% endif %}{% endblock %}
+
+{% block topbar_actions %}
+<a href="{{ url_for('invoices') }}" class="btn btn-ghost btn-sm">← Back</a>
+{% endblock %}
+
+{% block content %}
+
+{% if is_edit %}
+{% set suggested = next_number %}
+{% set current_num = invoice.invoice_number %}
+{% if current_num != suggested %}
+<div class="alert alert-info">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+  </svg>
+  The next correct invoice number is <strong>{{ suggested }}</strong>.
+  Your draft has <strong>{{ current_num }}</strong>.
+  <button type="button" class="btn-link" onclick="applyInvoiceNumber('{{ suggested }}')">Apply {{ suggested }}</button>
+</div>
+{% endif %}
+{% endif %}
+
+{% if is_edit %}
+  {% set form_action   = url_for('invoice_edit', invoice_id=invoice.id) %}
+  {% set finalize_action = url_for('invoice_edit', invoice_id=invoice.id) + '?finalize=1' %}
+{% else %}
+  {% set form_action   = url_for('invoice_new') %}
+  {% set finalize_action = url_for('invoice_new') + '?finalize=1' %}
+{% endif %}
+
+<form method="POST" action="{{ form_action }}" id="invoiceForm">
+
+  <div class="form-layout">
+
+    <!-- ─── LEFT COLUMN ─────────────────────────────────────────────────── -->
+    <div class="form-main">
+
+      <!-- Client & Header -->
+      <div class="card form-card">
+        <h3 class="card-title">Invoice Details</h3>
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>Client *</label>
+            <select name="client_id" id="clientSelect" required>
+              <option value="">— Select Client —</option>
+              {% for c in clients %}
+              <option value="{{ c.id }}"
+                {% if is_edit and invoice.client_id == c.id %}selected
+                {% elif preselect_client and preselect_client|int == c.id %}selected{% endif %}>
+                {{ c.company_name }} ({{ c.customer_number }})
+              </option>
+              {% endfor %}
+            </select>
+            <a href="{{ url_for('clients') }}" class="form-hint-link">+ Add new client</a>
+          </div>
+          <div></div>
+          <div class="form-group">
+            <label>Invoice Number *
+              <button type="button" class="btn-icon" title="Refresh to next number" onclick="refreshInvoiceNumber()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12">
+                  <polyline points="23,4 23,10 17,10"/>
+                  <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+                </svg>
+              </button>
+            </label>
+            <input type="text" name="invoice_number" id="invoiceNumber"
+                   value="{{ invoice.invoice_number if is_edit else next_number }}"
+                   required autocomplete="off">
+            <span class="form-hint" id="invoiceNumberHint"></span>
+          </div>
+          <div class="form-group">
+            <label>Invoice Date *</label>
+            <input type="date" name="invoice_date" id="invoiceDate"
+                   value="{{ invoice.invoice_date.isoformat() if is_edit else today }}" required>
+          </div>
+          <div class="form-group">
+            <label>Delivery Date</label>
+            <input type="date" name="delivery_date"
+                   value="{{ invoice.delivery_date.isoformat() if is_edit and invoice.delivery_date else today }}">
+          </div>
+        </div>
+      </div>
+
+      <!-- Line Items -->
+      <div class="card form-card">
+        <div class="card-title-row">
+          <h3 class="card-title">Line Items</h3>
+
+          <!-- Quick-add product selector -->
+          <div class="product-select-wrap">
+            <select id="productSelect">
+              <option value="">+ Add service</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="items-table-wrap">
+          <table class="items-table" id="itemsTable">
+            <thead>
+              <tr>
+                <th class="col-desc">Description</th>
+                <th class="col-amt">Amount</th>
+                <th class="col-price">Unit Price (€)</th>
+                <th class="col-disc">Discount (%)</th>
+                <th class="col-total">Total</th>
+                <th class="col-del"></th>
+              </tr>
+            </thead>
+            <tbody id="itemsBody">
+              {% if is_edit and invoice.items %}
+                {% for item in invoice.items %}
+                <tr class="item-row">
+                  <td><input type="text" name="item_description[]" class="item-input"
+                             value="{{ item.description }}" placeholder="Service description" required></td>
+                  <td><input type="number" name="item_amount[]" class="item-input item-num item-amount"
+                             value="{{ item.amount }}" step="0.01" min="0.01" placeholder="1"></td>
+                  <td><input type="number" name="item_price[]" class="item-input item-num item-price"
+                             value="{{ item.price }}" step="0.01" min="0" placeholder="0.00"></td>
+                  <td><input type="number" name="item_discount[]" class="item-input item-num item-discount"
+                             value="{{ item.discount or '' }}" step="0.01" min="0" max="100" placeholder="0"></td>
+                  <td class="item-total td-amount">{{ fmt(item.line_total) }}</td>
+                  <td><button type="button" class="btn-remove-row" onclick="removeRow(this)" title="Remove">&#x2715;</button></td>
+                </tr>
+                {% endfor %}
+              {% else %}
+                <!-- Default empty row -->
+                <tr class="item-row">
+                  <td><input type="text" name="item_description[]" class="item-input"
+                             placeholder="Service description" required></td>
+                  <td><input type="number" name="item_amount[]" class="item-input item-num item-amount"
+                             value="1" step="0.01" min="0.01" placeholder="1"></td>
+                  <td><input type="number" name="item_price[]" class="item-input item-num item-price"
+                             step="0.01" min="0" placeholder="0.00"></td>
+                  <td><input type="number" name="item_discount[]" class="item-input item-num item-discount"
+                             step="0.01" min="0" max="100" placeholder="0"></td>
+                  <td class="item-total td-amount">0,00 €</td>
+                  <td><button type="button" class="btn-remove-row" onclick="removeRow(this)" title="Remove">&#x2715;</button></td>
+                </tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+
+        <button type="button" class="btn btn-ghost btn-sm" onclick="addItemRow()" style="margin-top:12px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="13" height="13">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          Add Line
+        </button>
+
+        <!-- Totals -->
+        <div class="invoice-totals">
+          <div class="totals-row">
+            <span>Subtotal (gross)</span>
+            <span id="totalGross">0,00 €</span>
+          </div>
+          <div class="totals-row totals-vat">
+            <span>Incl. VAT 19%</span>
+            <span id="totalVat">0,00 €</span>
+          </div>
+          <div class="totals-row totals-grand">
+            <span>Total</span>
+            <span id="totalFinal">0,00 €</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Email -->
+      <div class="card form-card">
+        <h3 class="card-title">Email (for sending)</h3>
+        <div class="form-group">
+          <label>Subject</label>
+          <input type="text" name="email_subject" id="emailSubject"
+                 value="{{ invoice.email_subject if is_edit else '' }}"
+                 placeholder="Invoice [number] — AI Experts">
+        </div>
+        <div class="form-group">
+          <label>Body</label>
+          <textarea name="email_body" id="emailBody" rows="8"
+                    placeholder="Email body will be auto-filled when you select a client and number...">{{ invoice.email_body if is_edit else '' }}</textarea>
+        </div>
+        <button type="button" class="btn btn-ghost btn-xs" onclick="resetEmailDefaults()">Reset to default</button>
+      </div>
+
+    </div><!-- /form-main -->
+
+    <!-- ─── RIGHT SIDEBAR ────────────────────────────────────────────────── -->
+    <div class="form-side">
+      <div class="card form-card sticky-card">
+        <h3 class="card-title">Summary</h3>
+        <div class="summary-amount" id="summaryTotal">0,00 €</div>
+        <div class="summary-vat" id="summaryVat">incl. VAT: 0,00 €</div>
+
+        <div class="form-actions-stack">
+          <!-- formaction overrides the form's action URL → ?finalize=1 signals the route -->
+          <button type="submit" formaction="{{ finalize_action }}"
+                  class="btn btn-gold btn-full" id="btnFinalize">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14,2 14,8 20,8"/><polyline points="9,15 11,17 15,13"/>
+            </svg>
+            Finalize &amp; Generate PDF
+          </button>
+          <!-- Default form action (no ?finalize) → saves as draft -->
+          <button type="submit" class="btn btn-ghost btn-full">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v14a2 2 0 0 1-2 2z"/>
+              <polyline points="17,21 17,13 7,13 7,21"/><polyline points="7,3 7,8 15,8"/>
+            </svg>
+            Save as Draft
+          </button>
+          {% if is_edit %}
+          <form method="POST" action="{{ url_for('invoice_delete', invoice_id=invoice.id) }}"
+                onsubmit="return confirm('Delete this draft?')">
+            <button type="submit" class="btn btn-danger btn-full">Delete Draft</button>
+          </form>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /form-layout -->
+</form>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+// ── Config injected from server ──────────────────────────────────────────────
+const INVOICE_ID    = {{ invoice.id if is_edit else 'null' }};
+const IS_EDIT       = {{ 'true' if is_edit else 'false' }};
+const NEXT_NUMBER   = {{ next_number|tojson }};
+
+// Load products into quick-add selector
+fetch('/api/products').then(r => r.json()).then(products => {
+  const sel = document.getElementById('productSelect');
+  products.forEach(p => {
+    const opt = new Option(`${p.name} — ${formatCurrency(p.price)}`, p.id);
+    opt.dataset.name  = p.description || p.name;
+    opt.dataset.price = p.price;
+    sel.appendChild(opt);
+  });
+});
+
+document.getElementById('productSelect').addEventListener('change', function() {
+  const opt = this.options[this.selectedIndex];
+  if (!opt.value) return;
+  addItemRow(opt.dataset.name, 1, parseFloat(opt.dataset.price), 0);
+  this.selectedIndex = 0;
+  recalcTotals();
+});
+
+// ── Invoice number check ──────────────────────────────────────────────────────
+let numberCheckTimer = null;
+document.getElementById('invoiceNumber').addEventListener('input', function() {
+  clearTimeout(numberCheckTimer);
+  const hint = document.getElementById('invoiceNumberHint');
+  const val  = this.value.trim();
+  if (!val) { hint.textContent = ''; return; }
+  numberCheckTimer = setTimeout(() => {
+    fetch(`/api/check-invoice-number?number=${encodeURIComponent(val)}&exclude_id=${INVOICE_ID || ''}`)
+      .then(r => r.json())
+      .then(data => {
+        if (data.used) {
+          hint.textContent = '⚠ This number has already been sent!';
+          hint.className   = 'form-hint hint-error';
+        } else {
+          hint.textContent = '';
+        }
+      });
+  }, 400);
+});
+
+function refreshInvoiceNumber() {
+  fetch('/api/next-invoice-number').then(r => r.json()).then(d => {
+    document.getElementById('invoiceNumber').value = d.number;
+    document.getElementById('invoiceNumberHint').textContent = '';
+    updateEmailDefaults();
+  });
+}
+
+function applyInvoiceNumber(num) {
+  document.getElementById('invoiceNumber').value = num;
+  document.getElementById('invoiceNumberHint').textContent = '';
+  updateEmailDefaults();
+}
+
+// ── Email defaults ────────────────────────────────────────────────────────────
+function updateEmailDefaults() {
+  const subj = document.getElementById('emailSubject');
+  const body = document.getElementById('emailBody');
+  const num  = document.getElementById('invoiceNumber').value || '[number]';
+  const date = document.getElementById('invoiceDate').value;
+  const clientSel = document.getElementById('clientSelect');
+  const clientName = clientSel.options[clientSel.selectedIndex]?.text?.split(' (')[0] || '[Client]';
+  const dateStr = date ? new Date(date).toLocaleDateString('de-DE') : '[date]';
+
+  if (!subj.value || subj.dataset.autoFilled === 'true') {
+    subj.value = `Invoice ${num} — AI Experts`;
+    subj.dataset.autoFilled = 'true';
+  }
+  if (!body.value || body.dataset.autoFilled === 'true') {
+    body.value =
+`Dear ${clientName},
+
+Please find attached your invoice ${num} dated ${dateStr}.
+
+Please transfer the invoice amount to the bank account stated on the invoice. Payment is due upon receipt.
+
+Thank you for your trust. If you have any questions, please don't hesitate to reach out.
+
+Best regards,
+AI Experts
+
+---
+germanaicreator@gmail.com
+https://rosalia-yachts.com`;
+    body.dataset.autoFilled = 'true';
+  }
+}
+
+function resetEmailDefaults() {
+  document.getElementById('emailSubject').dataset.autoFilled = 'true';
+  document.getElementById('emailBody').dataset.autoFilled    = 'true';
+  document.getElementById('emailSubject').value = '';
+  document.getElementById('emailBody').value    = '';
+  updateEmailDefaults();
+}
+
+// Mark as manually edited
+['emailSubject','emailBody'].forEach(id => {
+  document.getElementById(id).addEventListener('input', function() {
+    this.dataset.autoFilled = 'false';
+  });
+});
+
+document.getElementById('clientSelect').addEventListener('change', updateEmailDefaults);
+document.getElementById('invoiceNumber').addEventListener('change', updateEmailDefaults);
+document.getElementById('invoiceDate').addEventListener('change', updateEmailDefaults);
+
+{% if not is_edit %}
+// Auto-fill defaults on first load if fields empty
+if (!document.getElementById('emailSubject').value) updateEmailDefaults();
+{% endif %}
+
+// ── Line item rows ────────────────────────────────────────────────────────────
+function addItemRow(desc='', amount=1, price=0, discount=0) {
+  const tbody = document.getElementById('itemsBody');
+  const row   = document.createElement('tr');
+  row.className = 'item-row';
+  row.innerHTML = `
+    <td><input type="text" name="item_description[]" class="item-input"
+               value="${escHtml(desc)}" placeholder="Service description" required></td>
+    <td><input type="number" name="item_amount[]" class="item-input item-num item-amount"
+               value="${amount}" step="0.01" min="0.01" placeholder="1"></td>
+    <td><input type="number" name="item_price[]" class="item-input item-num item-price"
+               value="${price || ''}" step="0.01" min="0" placeholder="0.00"></td>
+    <td><input type="number" name="item_discount[]" class="item-input item-num item-discount"
+               value="${discount || ''}" step="0.01" min="0" max="100" placeholder="0"></td>
+    <td class="item-total td-amount">0,00 €</td>
+    <td><button type="button" class="btn-remove-row" onclick="removeRow(this)" title="Remove">&#x2715;</button></td>`;
+  tbody.appendChild(row);
+  row.querySelectorAll('.item-amount,.item-price,.item-discount').forEach(el =>
+    el.addEventListener('input', recalcTotals));
+  recalcTotals();
+}
+
+function removeRow(btn) {
+  const tbody = document.getElementById('itemsBody');
+  if (tbody.children.length <= 1) return;  // keep at least one row
+  btn.closest('tr').remove();
+  recalcTotals();
+}
+
+// Wire existing rows
+document.querySelectorAll('.item-amount,.item-price,.item-discount').forEach(el =>
+  el.addEventListener('input', recalcTotals));
+
+function recalcTotals() {
+  let grand = 0;
+  document.querySelectorAll('.item-row').forEach(row => {
+    const amt  = parseFloat(row.querySelector('.item-amount')?.value)   || 0;
+    const prc  = parseFloat(row.querySelector('.item-price')?.value)    || 0;
+    const disc = parseFloat(row.querySelector('.item-discount')?.value) || 0;
+    let line   = amt * prc;
+    if (disc) line = line * (1 - disc / 100);
+    row.querySelector('.item-total').textContent = formatCurrency(line);
+    grand += line;
+  });
+  const vat = grand - (grand / 1.19);
+  document.getElementById('totalGross').textContent  = formatCurrency(grand);
+  document.getElementById('totalVat').textContent    = formatCurrency(vat);
+  document.getElementById('totalFinal').textContent  = formatCurrency(grand);
+  document.getElementById('summaryTotal').textContent = formatCurrency(grand);
+  document.getElementById('summaryVat').textContent  = 'incl. VAT: ' + formatCurrency(vat);
+}
+
+recalcTotals();  // initial calc on page load
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function formatCurrency(n) {
+  return n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, 'X')
+    .replace('.', ',').replace(/X/g, '.') + ' €';
+}
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+          .replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+}
+</script>
+{% endblock %}

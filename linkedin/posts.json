@@ -1,0 +1,49 @@
+{
+  "posts": [
+    {
+      "id": "eu-ai-act-recruiting-agencies-1",
+      "blog_slug": "eu-ai-act-recruiting-agencies",
+      "blog_title": "EU AI Act: What Every Recruiting Agency Must Know About AI Compliance",
+      "blog_url": "https://rosalia-yachts.com/blog/posts/eu-ai-act-recruiting-agencies/",
+      "post_number": 1,
+      "angle": "core_insight",
+      "text": "The EU AI Act doesn't just apply to companies building AI.\n\nIt applies to recruiting agencies that USE it.\n\nIf you run CV screening, candidate ranking, or automated scoring through an ATS \u2014 your agency is classified as a \"deployer\" under the regulation. And deployers have real legal obligations starting August 2026.\n\nThis surprised a lot of agency owners I've spoken to recently. They assumed compliance was someone else's problem \u2014 the AI vendor's job.\n\nIt's not.\n\nAs the deployer, you're responsible for:\n\u2014 Informing candidates that AI played a role in decisions about them\n\u2014 Keeping a human in the loop who can override AI outputs\n\u2014 Logging how and when your high-risk AI systems are used\n\u2014 Ensuring candidates can request a human review\n\nThe good news: most of this is process, not technology. You don't need to rip out your ATS or stop using AI tools. You need to document what you do and be transparent about it.\n\nThe agencies that get ahead of this now won't be scrambling in 2026 \u2014 and they'll have a real differentiator with clients who ask about AI governance.\n\nWhat's the one AI tool in your recruiting workflow you've never thought of as \"regulated\"?\n\n#EUAIAct #AICompliance #RecruitingAgencies #TalentAcquisition #AIAutomation",
+      "image_path": "/Users/dominiks_mac/Business Website Creation/linkedin/images/eu-ai-act-recruiting-agencies-1.jpg",
+      "posted": true,
+      "posted_at": "2026-04-15T10:15:14Z",
+      "linkedin_post_id": "urn:li:share:7450124568234532864",
+      "created_at": "2026-04-15T00:00:00Z",
+      "video_posted": true,
+      "video_posted_at": "2026-04-15T11:37:34Z",
+      "youtube_url": "https://www.youtube.com/shorts/KOzXmrxr1nk"
+    },
+    {
+      "id": "eu-ai-act-recruiting-agencies-2",
+      "blog_slug": "eu-ai-act-recruiting-agencies",
+      "blog_title": "EU AI Act: What Every Recruiting Agency Must Know About AI Compliance",
+      "blog_url": "https://rosalia-yachts.com/blog/posts/eu-ai-act-recruiting-agencies/",
+      "post_number": 2,
+      "angle": "practical_tips",
+      "text": "Your 7-step EU AI Act compliance checklist for recruiting agencies.\n\nAugust 2026 is the hard deadline for deployers of high-risk AI. That's sooner than it sounds once you factor in updating contracts, rewriting candidate comms, and training your team.\n\nHere's where to start today:\n\n1. Inventory every AI tool you use \u2014 ATS ranking features, CV screeners, video interview analysis, outreach automation. All of it.\n\n2. Classify each tool by risk tier. Does it score, filter, or rank candidates? High-risk. Does it only communicate or schedule? Limited risk.\n\n3. Ask your vendors where they stand on compliance. High-risk AI providers have their own obligations \u2014 conformity assessments, CE marking from August 2026. If they can't answer, that's a red flag.\n\n4. Update your candidate disclosures. Add AI transparency language to application forms, privacy notices, and automated emails. One clear sentence is enough.\n\n5. Document your human oversight process. Who reviews AI shortlists? How can a candidate request a human to look at their application?\n\n6. Check your data practices. Do you have a legal basis for any special category data entering an AI system?\n\n7. Start keeping logs. Record how and when you use high-risk AI. This log can be audited.\n\nNone of this is impossible. It's just process.\n\nWhich of these 7 steps is furthest from where your agency is today?\n\n#EUAIAct #Recruiting #AICompliance #HRTech #TalentAcquisition",
+      "image_path": "/Users/dominiks_mac/Business Website Creation/linkedin/images/eu-ai-act-recruiting-agencies-2.jpg",
+      "posted": true,
+      "posted_at": "2026-04-18T12:19:53Z",
+      "linkedin_post_id": "urn:li:share:7451243104503803904",
+      "created_at": "2026-04-15T00:00:00Z"
+    },
+    {
+      "id": "eu-ai-act-recruiting-agencies-3",
+      "blog_slug": "eu-ai-act-recruiting-agencies",
+      "blog_title": "EU AI Act: What Every Recruiting Agency Must Know About AI Compliance",
+      "blog_url": "https://rosalia-yachts.com/blog/posts/eu-ai-act-recruiting-agencies/",
+      "post_number": 3,
+      "angle": "problem_story",
+      "text": "A recruiter told me last week: \"We just use tools \u2014 we don't build AI. So the AI Act doesn't really apply to us.\"\n\nI hear this constantly.\n\nAnd it's the most dangerous assumption a recruiting agency can make right now.\n\nImagine this: Your ATS has a built-in scoring feature that ranks candidates before a recruiter sees them. You've used it for two years. It's fast, it works, you barely think about it.\n\nUnder the EU AI Act, that scoring feature is classified as high-risk AI. And as the organisation deploying it, you are legally responsible for how it's used \u2014 not the vendor that built it.\n\nThat means candidates have the right to know it's being used on them. That means a human must be able to override its outputs. That means you need a process candidates can use to request a human review.\n\nAgencies that treat this as \"someone else's compliance problem\" are going to face a rude awakening in 2026.\n\nThe ones that get ahead of it now \u2014 by being transparent with candidates, documenting their processes, and designing AI into their workflow responsibly \u2014 will actually turn this into a competitive edge.\n\nClients are already asking about AI governance in supplier audits. Candidates are starting to ask too.\n\nAre you prepared to answer?\n\n#AIAct #RecruitingCompliance #TalentAcquisition #HRTech #AIAutomation",
+      "image_path": "/Users/dominiks_mac/Business Website Creation/linkedin/images/eu-ai-act-recruiting-agencies-3.jpg",
+      "posted": false,
+      "posted_at": null,
+      "linkedin_post_id": null,
+      "created_at": "2026-04-15T00:00:00Z"
+    }
+  ]
+}

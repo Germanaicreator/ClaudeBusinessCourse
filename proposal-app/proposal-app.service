@@ -1,0 +1,21 @@
+[Unit]
+Description=Proposal & Contract Generator (Gunicorn)
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/proposals
+EnvironmentFile=/var/www/proposals/.env
+ExecStart=/var/www/proposals/venv/bin/gunicorn \
+    --workers 2 \
+    --bind 127.0.0.1:5002 \
+    --timeout 120 \
+    --log-file /var/log/proposal-app.log \
+    --access-logfile /var/log/proposal-app-access.log \
+    app:app
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
