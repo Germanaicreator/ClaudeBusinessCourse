@@ -1,6 +1,6 @@
 # AI Experts Business Suite
 
-A complete, Claude Code–built business tech stack for a solo AI automation consultancy — built live as part of a public course by **Dominik (German AI Creator)**.
+A complete, Claude Code–built business tech stack for an example solo AI automation consultancy — built live as part of a video course by **Dominik Pascal Felber (Germanaicreator)**.
 
 This repository contains every system built during the course: the main website, blog, invoice dashboard, proposal generator, LinkedIn automation, YouTube pipeline, email analyzer, PII cleaner, and a business command center — all deployable to a single Linux VPS.
 
@@ -27,7 +27,7 @@ This repository contains every system built during the course: the main website,
 
 ## Prerequisites
 
-- A Linux VPS (Ubuntu 22.04+ recommended) with `root` access
+- A VPS (Ubuntu 22.04+ recommended) with `root` access
 - A domain name pointed at your server
 - Python 3.10+, `sshpass`, `nginx`, `certbot` on the server
 - Accounts for: Stripe, LinkedIn, YouTube/Google, HeyGen, Azure OpenAI, kie.ai, Fireflies
@@ -139,6 +139,6 @@ All Flask apps run as `systemd` services behind Nginx with SSL.
 
 This entire business suite was built **live using Claude Code** as course material. Every system — from the invoice app to the full content pipeline — was created through conversation with Claude, with the exact prompts documented in `Original Claude Code Prompts/`.
 
-**Original creator:** Dominik — [German AI Creator](https://www.youtube.com/@germanaicreator) · [LinkedIn](https://www.linkedin.com/company/limitless-ai-solutions-llc) · [Instagram](https://www.instagram.com/germanaicreator)
+**Original creator:** Dominik Pascal Felber — [Germanaicreator / Limitless AI Solutions LLC](https://www.youtube.com/@germanaicreator) · [LinkedIn](https://www.linkedin.com/in/dominik-felber-32b71812a/) · [Instagram](https://www.instagram.com/germanaicreator)
 
 See [LICENSE](LICENSE) for terms of use.
