@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="AI Experts builds custom AI automations for recruiting agencies — CV screening, personalised outreach, candidate follow-ups. Version 1 in 5 business days.">
+  <title>AI Experts — Custom AI Automations for Recruiting Agencies</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+
+  <!-- Canonical & SEO -->
+  <link rel="canonical" href="https://rosalia-yachts.com/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="AI Experts — Custom AI Automations for Recruiting Agencies">
+  <meta property="og:description" content="AI Experts builds custom AI automations for recruiting agencies — CV screening, personalised outreach, candidate follow-ups. Version 1 in 5 business days.">
+  <meta property="og:url" content="https://rosalia-yachts.com/">
+  <meta property="og:image" content="https://rosalia-yachts.com/logo_big_white.png">
+  <meta property="og:site_name" content="AI Experts">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="AI Experts — Custom AI Automations for Recruiting Agencies">
+  <meta name="twitter:description" content="Custom AI automations for recruiting agencies. CV screening, personalised outreach, ATS automation. Version 1 in 5 business days.">
+  <meta name="twitter:image" content="https://rosalia-yachts.com/logo_big_white.png">
+
+  <!-- Self-hosted fonts — no external request, no GDPR risk -->
+  <link rel="stylesheet" href="fonts.css">
+
+  <!-- Calendly — deferred to avoid render-blocking -->
+  <link rel="preload" href="https://assets.calendly.com/assets/external/widget.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet"></noscript>
+  <script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript" async></script>
+  <style>
+/* ─── VARIABLES ─────────────────────────────────────────── */
+:root {
+  --bg:         #07070e;
+  --bg2:        #0c0c18;
+  --bg3:        #111120;
+  --bgcard:     #0f0f1c;
+  --border:     rgba(255,255,255,0.07);
+  --bordergold: rgba(201,169,110,0.28);
+  --text:       #ede9df;
+  --muted:      rgba(237,233,223,0.56);
+  --subtle:     rgba(237,233,223,0.32);
+  --gold:       #c9a96e;
+  --goldlight:  #dfbd84;
+  --golddim:    rgba(201,169,110,0.10);
+  --goldglow:   rgba(201,169,110,0.20);
+  --r:          12px;
+  --rl:         20px;
+  --ease:       0.3s cubic-bezier(0.4,0,0.2,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;font-size:16px;line-height:1.65;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+::selection{background:rgba(201,169,110,0.22);color:var(--text)}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:3px}
+
+/* ─── NOISE OVERLAY ──────────────────────────────────────── */
+body::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:999;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity:.4
+}
+
+/* ─── TYPE ───────────────────────────────────────────────── */
+h1,h2,h3,h4{font-family:'Cormorant',serif;line-height:1.1}
+.label{font-size:.7rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem;display:block}
+.section-title{font-family:'Cormorant',serif;font-size:clamp(2rem,4vw,3.2rem);font-weight:600;letter-spacing:-.02em}
+.section-sub{font-size:1.05rem;color:var(--muted);line-height:1.72;max-width:560px}
+
+/* ─── LAYOUT ─────────────────────────────────────────────── */
+.container{max-width:1160px;margin:0 auto;padding:0 24px}
+
+/* ─── BUTTONS ────────────────────────────────────────────── */
+.btn{
+  display:inline-flex;align-items:center;gap:8px;padding:14px 28px;
+  border-radius:6px;font-family:'Outfit',sans-serif;font-size:.95rem;
+  font-weight:600;cursor:pointer;border:none;transition:var(--ease);
+  text-decoration:none;position:relative;overflow:hidden;white-space:nowrap
+}
+.btn-primary{background:var(--gold);color:#07070e}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 8px 32px rgba(201,169,110,.38)}
+.btn-ghost{background:transparent;color:var(--text);border:1px solid var(--border)}
+.btn-ghost:hover{border-color:var(--bordergold);color:var(--gold)}
+.btn-lg{padding:17px 36px;font-size:1rem}
+
+/* ─── NAV ────────────────────────────────────────────────── */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 0;transition:padding .4s,background .4s,backdrop-filter .4s}
+nav.scrolled{padding:13px 0;background:rgba(7,7,14,.88);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;gap:24px}
+.nav-logo img{height:34px;width:auto}
+.nav-links{display:flex;align-items:center;gap:28px;list-style:none}
+.nav-links a{font-size:.88rem;color:var(--muted);transition:color var(--ease)}
+.nav-links a:hover{color:var(--text)}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;background:none;border:none}
+.hamburger span{display:block;width:22px;height:1.5px;background:var(--text);transition:var(--ease)}
+.mob{display:none;position:fixed;inset:0;background:rgba(7,7,14,.97);backdrop-filter:blur(20px);z-index:99;flex-direction:column;align-items:center;justify-content:center;gap:28px}
+.mob.open{display:flex}
+.mob a{font-family:'Cormorant',serif;font-size:2.4rem;font-weight:500;color:var(--text);transition:color var(--ease)}
+.mob a:hover{color:var(--gold)}
+.mob-close{position:absolute;top:22px;right:22px;background:none;border:1px solid var(--border);color:var(--text);width:38px;height:38px;border-radius:8px;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center}
+
+/* ─── HERO ───────────────────────────────────────────────── */
+#hero{min-height:100vh;display:flex;align-items:center;position:relative;overflow:hidden;padding:130px 0 90px}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(201,169,110,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(201,169,110,.035) 1px,transparent 1px);background-size:64px 64px;mask-image:radial-gradient(ellipse 80% 80% at 50% 40%,black 20%,transparent 100%)}
+.orb{position:absolute;border-radius:50%;filter:blur(90px);pointer-events:none}
+.orb1{width:700px;height:700px;background:radial-gradient(circle,rgba(201,169,110,.10) 0%,transparent 70%);top:-180px;right:-120px;animation:drift1 14s ease-in-out infinite}
+.orb2{width:500px;height:500px;background:radial-gradient(circle,rgba(80,60,180,.08) 0%,transparent 70%);bottom:-80px;left:-80px;animation:drift2 17s ease-in-out infinite}
+.orb3{width:280px;height:280px;background:radial-gradient(circle,rgba(201,169,110,.06) 0%,transparent 70%);top:45%;left:38%;animation:drift3 11s ease-in-out infinite}
+@keyframes drift1{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-36px,28px) scale(1.06)}}
+@keyframes drift2{0%,100%{transform:translate(0,0)}50%{transform:translate(28px,-36px) scale(1.08)}}
+@keyframes drift3{0%,100%{transform:translate(0,0)}50%{transform:translate(-18px,-18px)}}
+.hero-content{position:relative;z-index:2;max-width:780px}
+.hero-badge{display:inline-flex;align-items:center;gap:9px;padding:6px 14px;border:1px solid var(--bordergold);border-radius:100px;font-size:.76rem;font-weight:500;color:var(--gold);margin-bottom:28px;background:var(--golddim);letter-spacing:.05em;animation:fadeup .8s ease .1s both}
+.hero-badge-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.75)}}
+.hero-h1{font-family:'Cormorant',serif;font-size:clamp(3.2rem,6.5vw,6rem);font-weight:600;line-height:1.0;letter-spacing:-.025em;margin-bottom:24px;animation:fadeup .8s ease .25s both}
+.hero-h1 em{font-style:italic;color:var(--gold)}
+.hero-sub{font-size:1.12rem;color:var(--muted);line-height:1.72;max-width:560px;margin-bottom:40px;animation:fadeup .8s ease .4s both}
+.hero-cta{display:flex;align-items:center;gap:14px;flex-wrap:wrap;animation:fadeup .8s ease .55s both}
+.hero-trust{display:flex;align-items:center;gap:14px;margin-top:52px;padding-top:36px;border-top:1px solid var(--border);animation:fadeup .8s ease .7s both}
+.hero-trust img{height:20px;width:auto;opacity:.85}
+.hero-trust-txt{font-size:.84rem;color:var(--subtle)}
+.hero-trust-txt strong{color:var(--muted);font-weight:500}
+@keyframes fadeup{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+
+/* ─── STATS ──────────────────────────────────────────────── */
+#stats{border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--bg2)}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr)}
+.stat{padding:40px 28px;border-right:1px solid var(--border);text-align:center}
+.stat:last-child{border-right:none}
+.stat-num{font-family:'Cormorant',serif;font-size:3rem;font-weight:700;color:var(--gold);line-height:1;margin-bottom:6px;letter-spacing:-.02em}
+.stat-lbl{font-size:.82rem;color:var(--muted);line-height:1.42}
+
+/* ─── REVEAL ─────────────────────────────────────────────── */
+.rv{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease}
+.rv.on{opacity:1;transform:translateY(0)}
+.d1{transition-delay:.1s}.d2{transition-delay:.2s}.d3{transition-delay:.3s}.d4{transition-delay:.4s}.d5{transition-delay:.5s}
+
+/* ─── PROBLEM ────────────────────────────────────────────── */
+#problem{padding:120px 0}
+.prob-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
+.prob-callout{margin-top:28px;padding:22px 24px;border-left:2px solid var(--gold);background:var(--golddim);border-radius:0 var(--r) var(--r) 0}
+.prob-callout p{font-family:'Cormorant',serif;font-size:1.3rem;font-style:italic;line-height:1.45}
+.prob-list{list-style:none;display:flex;flex-direction:column;gap:16px;margin-top:0}
+.prob-item{display:flex;gap:16px;align-items:flex-start;padding:20px;border:1px solid var(--border);border-radius:var(--r);background:var(--bgcard);transition:border-color var(--ease)}
+.prob-item:hover{border-color:rgba(201,169,110,.2)}
+.prob-icon{width:36px;height:36px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--gold);background:var(--golddim);border-radius:8px;margin-top:2px}
+.prob-txt strong{display:block;color:var(--text);font-weight:500;margin-bottom:4px}
+.prob-txt{font-size:.93rem;color:var(--muted);line-height:1.6}
+
+/* ─── SERVICES ───────────────────────────────────────────── */
+#services{padding:120px 0;background:var(--bg2)}
+.svc-head{text-align:center;max-width:640px;margin:0 auto 60px}
+.svc-head .section-sub{margin:14px auto 0;text-align:center}
+.svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden}
+.svc-card{background:var(--bgcard);padding:40px 32px;transition:background var(--ease);position:relative}
+.svc-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:0;transition:opacity var(--ease)}
+.svc-card:hover{background:var(--bg3)}
+.svc-card:hover::before{opacity:1}
+.svc-n{font-family:'Cormorant',serif;font-size:3.8rem;font-weight:300;color:rgba(201,169,110,.13);line-height:1;margin-bottom:18px;letter-spacing:-.04em}
+.svc-title{font-family:'Cormorant',serif;font-size:1.45rem;font-weight:600;margin-bottom:10px;line-height:1.2}
+.svc-desc{font-size:.9rem;color:var(--muted);line-height:1.65}
+.svc-tag{display:inline-block;margin-top:14px;padding:4px 10px;background:var(--golddim);border:1px solid var(--bordergold);border-radius:4px;font-size:.7rem;font-weight:600;color:var(--gold);letter-spacing:.05em;text-transform:uppercase}
+
+/* ─── RESULTS ────────────────────────────────────────────── */
+#results{padding:120px 0}
+.res-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:52px;gap:32px;flex-wrap:wrap}
+.res-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:22px}
+.res-card{border:1px solid var(--border);border-radius:var(--rl);background:var(--bgcard);padding:40px;transition:border-color var(--ease),transform var(--ease);position:relative;overflow:hidden}
+.res-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:0;transition:opacity var(--ease)}
+.res-card:hover{border-color:var(--bordergold);transform:translateY(-4px)}
+.res-card:hover::after{opacity:1}
+.res-ghost{font-family:'Cormorant',serif;font-size:5rem;font-weight:700;color:rgba(201,169,110,.12);line-height:1;position:absolute;top:20px;right:28px;letter-spacing:-.04em;pointer-events:none}
+.res-lbl{font-size:.7rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+.res-agency{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--subtle);margin-bottom:16px}
+.res-card h3{font-family:'Cormorant',serif;font-size:1.5rem;font-weight:600;margin-bottom:20px;line-height:1.2}
+.res-rl{font-size:.7rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--subtle);margin-bottom:3px}
+.res-rt{font-size:.9rem;color:var(--muted);line-height:1.55;margin-bottom:14px}
+.res-outcome{margin-top:20px;padding:14px 18px;background:var(--golddim);border:1px solid var(--bordergold);border-radius:8px}
+.res-outcome .res-rl{color:var(--gold)}
+.res-outcome p{font-size:.95rem;font-weight:500;color:var(--text);margin-top:2px}
+
+/* ─── PROCESS ────────────────────────────────────────────── */
+#process{padding:120px 0;background:var(--bg2);overflow:hidden}
+.proc-head{text-align:center;max-width:540px;margin:0 auto 68px}
+.proc-head .section-sub{margin:14px auto 0;text-align:center}
+.proc-steps{display:flex;flex-direction:column;max-width:800px;margin:0 auto;position:relative}
+.proc-steps::before{content:'';position:absolute;left:27px;top:56px;bottom:56px;width:1px;background:linear-gradient(to bottom,var(--gold),rgba(201,169,110,.06))}
+.proc-step{display:grid;grid-template-columns:56px 1fr;gap:32px;padding:36px 0;border-bottom:1px solid var(--border)}
+.proc-step:last-child{border-bottom:none}
+.step-num{width:56px;height:56px;border-radius:50%;border:1px solid var(--bordergold);background:var(--bg3);display:flex;align-items:center;justify-content:center;font-family:'Cormorant',serif;font-size:1.4rem;font-weight:600;color:var(--gold);flex-shrink:0;position:relative;z-index:1}
+.step-body{padding-top:11px}
+.step-body h3{font-family:'Cormorant',serif;font-size:1.48rem;font-weight:600;margin-bottom:8px;line-height:1.2}
+.step-body p{font-size:.93rem;color:var(--muted);line-height:1.68;max-width:560px}
+.step-tag{margin-top:12px;display:inline-flex;align-items:center;gap:6px;font-size:.78rem;color:var(--gold);font-weight:500}
+.step-tag::before{content:'';width:14px;height:1px;background:var(--gold)}
+
+/* ─── TESTIMONIALS ───────────────────────────────────────── */
+#testimonials{padding:120px 0}
+.test-head{text-align:center;max-width:540px;margin:0 auto 60px}
+.test-head .section-sub{margin:14px auto 0;text-align:center}
+.test-row1{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:18px}
+.test-row2{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;max-width:calc(66.66% + 6px)}
+.tcard{border:1px solid var(--border);border-radius:var(--rl);background:var(--bgcard);padding:34px;display:flex;flex-direction:column;transition:border-color var(--ease),transform var(--ease)}
+.tcard:hover{border-color:var(--bordergold);transform:translateY(-3px)}
+.tcard-stars{margin-bottom:18px}
+.tcard-stars img{height:20px;width:auto;opacity:.88}
+.tcard-text{font-size:.95rem;line-height:1.7;color:var(--muted);flex:1;margin-bottom:22px;font-style:italic}
+.tcard-text::before{content:'\201C';font-family:'Cormorant',serif;font-size:2.6rem;color:var(--gold);line-height:0;vertical-align:-.72rem;margin-right:3px;opacity:.5}
+.tcard-author{border-top:1px solid var(--border);padding-top:18px}
+.tcard-name{font-size:.88rem;font-weight:600;color:var(--text)}
+.tcard-role{font-size:.78rem;color:var(--subtle);margin-top:2px}
+.tcard-date{font-size:.73rem;color:var(--subtle);margin-top:3px}
+
+/* ─── ABOUT ──────────────────────────────────────────────── */
+#about{padding:120px 0;background:var(--bg2)}
+.about-grid{display:grid;grid-template-columns:1fr 1.15fr;gap:80px;align-items:center}
+.about-img-wrap{position:relative}
+.about-img-frame{border-radius:50%;overflow:hidden;background:transparent;box-shadow:0 0 0 2px var(--bordergold);aspect-ratio:1;position:relative}
+.about-img-frame::before{content:'';position:absolute;inset:0;border-radius:50%;background:linear-gradient(135deg,rgba(201,169,110,.2) 0%,transparent 45%);z-index:1;pointer-events:none}
+.about-img-frame img{width:100%;height:100%;object-fit:cover;object-position:center top;filter:grayscale(15%) contrast(1.05);transition:filter .5s ease;display:block}
+.about-img-frame:hover img{filter:grayscale(0%) contrast(1)}
+.about-badge{position:absolute;bottom:-18px;right:-18px;width:116px;height:116px;border:1px solid var(--bordergold);border-radius:var(--r);background:var(--bg3);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:14px;z-index:2}
+.about-badge-n{font-family:'Cormorant',serif;font-size:2.2rem;font-weight:700;color:var(--gold);line-height:1}
+.about-badge-t{font-size:.7rem;color:var(--muted);line-height:1.3;margin-top:3px}
+.about-content h2{font-family:'Cormorant',serif;font-size:clamp(1.8rem,3vw,2.75rem);font-weight:600;line-height:1.12;letter-spacing:-.02em;margin-bottom:22px}
+.about-content h2 em{font-style:italic;color:var(--gold)}
+.about-p{font-size:.95rem;color:var(--muted);line-height:1.75;margin-bottom:14px}
+.about-creds{list-style:none;display:flex;flex-direction:column;gap:11px;margin:26px 0 34px}
+.about-cred{display:flex;align-items:center;gap:12px;font-size:.9rem;color:var(--muted)}
+.about-cred::before{content:'';width:18px;height:1px;background:var(--gold);flex-shrink:0}
+.about-cred strong{color:var(--text);font-weight:500}
+
+/* ─── FAQ ────────────────────────────────────────────────── */
+#faq{padding:120px 0}
+.faq-grid{display:grid;grid-template-columns:1fr 2fr;gap:80px;align-items:start}
+.faq-sidebar{position:sticky;top:96px}
+.faq-sidebar .section-sub{margin-top:14px}
+.faq-sidebar .btn{margin-top:28px}
+.faq-list{display:flex;flex-direction:column}
+.faq-item{border-bottom:1px solid var(--border);overflow:hidden}
+.faq-q{width:100%;text-align:left;background:none;border:none;padding:22px 0;font-family:'Outfit',sans-serif;font-size:.98rem;font-weight:500;color:var(--text);cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:14px;transition:color var(--ease)}
+.faq-q:hover{color:var(--gold)}
+.faq-icon{width:24px;height:24px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.95rem;color:var(--muted);transition:var(--ease)}
+.faq-item.open .faq-icon{transform:rotate(45deg);border-color:var(--gold);color:var(--gold)}
+.faq-ans{max-height:0;overflow:hidden;transition:max-height .4s ease}
+.faq-item.open .faq-ans{max-height:400px}
+.faq-ans-in{padding-bottom:22px;font-size:.92rem;color:var(--muted);line-height:1.7}
+
+/* ─── ASSESSMENT ─────────────────────────────────────────── */
+#assessment{padding:120px 0;background:var(--bg2);position:relative;overflow:hidden}
+#assessment::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(201,169,110,.055) 0%,transparent 68%);pointer-events:none}
+.asmnt-head{text-align:center;max-width:620px;margin:0 auto 68px}
+.asmnt-head .section-sub{margin:14px auto 0;text-align:center}
+.asmnt-layout{display:grid;grid-template-columns:1fr 420px;gap:40px;align-items:start}
+.asmnt-deliverables{display:flex;flex-direction:column;gap:18px}
+.asmnt-d{display:grid;grid-template-columns:44px 1fr;gap:20px;align-items:start;padding:24px;border:1px solid var(--border);border-radius:var(--rl);background:var(--bgcard);transition:border-color var(--ease),transform var(--ease)}
+.asmnt-d:hover{border-color:rgba(201,169,110,.22);transform:translateX(4px)}
+.asmnt-d-icon{width:44px;height:44px;border-radius:10px;background:var(--golddim);border:1px solid var(--bordergold);display:flex;align-items:center;justify-content:center;color:var(--gold);flex-shrink:0;margin-top:1px}
+.asmnt-d-body strong{display:block;font-size:.98rem;font-weight:600;color:var(--text);margin-bottom:5px;line-height:1.3}
+.asmnt-d-body p{font-size:.88rem;color:var(--muted);line-height:1.6}
+.asmnt-card{border:1px solid var(--bordergold);border-radius:var(--rl);background:linear-gradient(145deg,rgba(201,169,110,.06) 0%,var(--bgcard) 60%);padding:40px 36px;position:sticky;top:96px}
+.asmnt-card-badge{display:inline-flex;align-items:center;gap:8px;padding:5px 12px;background:var(--golddim);border:1px solid var(--bordergold);border-radius:100px;font-size:.7rem;font-weight:600;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-bottom:24px}
+.asmnt-card-badge-dot{width:5px;height:5px;border-radius:50%;background:var(--gold);animation:blink 2s infinite}
+.asmnt-price{display:flex;align-items:baseline;gap:8px;margin-bottom:6px}
+.asmnt-price-amt{font-family:'Cormorant',serif;font-size:3.6rem;font-weight:700;color:var(--text);line-height:1;letter-spacing:-.03em}
+.asmnt-price-cur{font-family:'Cormorant',serif;font-size:1.6rem;font-weight:500;color:var(--gold);line-height:1}
+.asmnt-price-type{font-size:.8rem;color:var(--muted);margin-bottom:24px}
+.asmnt-card-divider{height:1px;background:var(--border);margin:24px 0}
+.asmnt-incl{list-style:none;display:flex;flex-direction:column;gap:11px;margin-bottom:28px}
+.asmnt-incl li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:var(--muted);line-height:1.5}
+.asmnt-incl li::before{content:'';display:block;width:14px;height:1px;background:var(--gold);flex-shrink:0;margin-top:9px}
+.asmnt-incl li strong{color:var(--text);font-weight:500}
+.asmnt-card .btn{width:100%;justify-content:center;padding:17px 24px;font-size:1rem}
+.asmnt-card-note{font-size:.76rem;color:var(--subtle);text-align:center;margin-top:14px;line-height:1.5}
+.asmnt-test-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;background:rgba(255,193,7,.08);border:1px solid rgba(255,193,7,.25);border-radius:4px;font-size:.66rem;font-weight:700;color:rgba(255,193,7,.7);letter-spacing:.1em;text-transform:uppercase;margin-top:10px}
+@media(max-width:1024px){.asmnt-layout{grid-template-columns:1fr;gap:28px}.asmnt-card{position:static}}
+@media(max-width:768px){.asmnt-layout{grid-template-columns:1fr}}
+
+/* ─── CTA ────────────────────────────────────────────────── */
+#cta{padding:160px 0;position:relative;overflow:hidden}
+#cta::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 50%,rgba(201,169,110,.07) 0%,transparent 70%)}
+.cta-in{text-align:center;position:relative;z-index:1;max-width:680px;margin:0 auto}
+.cta-in h2{font-family:'Cormorant',serif;font-size:clamp(2.5rem,5vw,4.4rem);font-weight:600;line-height:1.05;letter-spacing:-.025em;margin-bottom:18px}
+.cta-in h2 em{font-style:italic;color:var(--gold)}
+.cta-sub{font-size:1.05rem;color:var(--muted);line-height:1.7;max-width:480px;margin:0 auto 36px}
+.cta-note{margin-top:18px;font-size:.8rem;color:var(--subtle)}
+
+/* ─── FOOTER ─────────────────────────────────────────────── */
+footer{background:var(--bg2);border-top:1px solid var(--border);padding:60px 0 30px}
+.foot-top{display:grid;grid-template-columns:1.6fr 1fr 1fr;gap:60px;padding-bottom:48px;border-bottom:1px solid var(--border);margin-bottom:28px}
+.foot-brand img{height:30px;width:auto;margin-bottom:14px}
+.foot-brand p{font-size:.86rem;color:var(--muted);line-height:1.65;max-width:280px;margin-bottom:18px}
+.foot-social{display:flex;gap:10px}
+.soc{width:36px;height:36px;border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--muted);transition:var(--ease)}
+.soc:hover{border-color:var(--bordergold);color:var(--gold)}
+.foot-col h4{font-family:'Outfit',sans-serif;font-size:.76rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--subtle);margin-bottom:14px}
+.foot-links{list-style:none;display:flex;flex-direction:column;gap:9px}
+.foot-links a{font-size:.86rem;color:var(--muted);transition:color var(--ease)}
+.foot-links a:hover{color:var(--gold)}
+.foot-btm{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.foot-copy{font-size:.78rem;color:var(--subtle)}
+.foot-legal{display:flex;gap:22px}
+.foot-legal a{font-size:.78rem;color:var(--subtle);transition:color var(--ease);cursor:pointer}
+.foot-legal a:hover{color:var(--muted)}
+
+/* ─── MODALS ─────────────────────────────────────────────── */
+.mo{position:fixed;inset:0;background:rgba(7,7,14,.92);backdrop-filter:blur(14px);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .3s}
+.mo.open{opacity:1;pointer-events:all}
+.mdl{background:var(--bg3);border:1px solid var(--border);border-radius:var(--rl);max-width:680px;width:100%;max-height:82vh;overflow-y:auto;padding:48px;position:relative;transform:translateY(14px);transition:transform .3s}
+.mo.open .mdl{transform:translateY(0)}
+.mdl-close{position:absolute;top:18px;right:18px;background:none;border:1px solid var(--border);color:var(--muted);width:36px;height:36px;border-radius:8px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:var(--ease)}
+.mdl-close:hover{border-color:var(--bordergold);color:var(--text)}
+.mdl h2{font-family:'Cormorant',serif;font-size:2rem;font-weight:600;margin-bottom:6px}
+.mdl .mdl-sub{font-size:.83rem;color:var(--subtle);margin-bottom:28px;padding-bottom:22px;border-bottom:1px solid var(--border)}
+.mdl h3{font-family:'Outfit',sans-serif;font-size:.78rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:24px 0 8px}
+.mdl p{font-size:.9rem;color:var(--muted);line-height:1.7;margin-bottom:10px}
+.mdl ul{padding-left:18px;color:var(--muted);font-size:.9rem;line-height:1.7}
+.mdl ul li{margin-bottom:5px}
+.mdl a{color:var(--gold)}
+
+/* ─── RESPONSIVE ─────────────────────────────────────────── */
+@media(max-width:1024px){
+  .svc-grid{grid-template-columns:repeat(2,1fr)}
+  .about-grid{grid-template-columns:1fr 1fr;gap:48px}
+  .foot-top{grid-template-columns:1fr 1fr}
+  .foot-brand{grid-column:1/-1}
+}
+@media(max-width:768px){
+  .nav-links{display:none}
+  .hamburger{display:flex}
+  .prob-grid{grid-template-columns:1fr;gap:40px}
+  .svc-grid{grid-template-columns:1fr}
+  .res-grid{grid-template-columns:1fr}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .stat:nth-child(2){border-right:none}
+  .stat:nth-child(1),.stat:nth-child(2){border-bottom:1px solid var(--border)}
+  .test-row1{grid-template-columns:1fr}
+  .test-row2{grid-template-columns:1fr;max-width:100%}
+  .about-grid{grid-template-columns:1fr;gap:48px}
+  .about-img-frame img{height:100%}
+  .about-badge{bottom:-14px;right:-8px}
+  .faq-grid{grid-template-columns:1fr;gap:28px}
+  .faq-sidebar{position:static}
+  .foot-top{grid-template-columns:1fr;gap:36px}
+  .foot-brand{grid-column:auto}
+  .foot-btm{flex-direction:column;align-items:flex-start}
+  .hero-trust{flex-direction:column;align-items:flex-start}
+  .nav-cta .btn-ghost{display:none}
+  .mdl{padding:32px 22px}
+  .proc-steps::before{display:none}
+}
+@media(max-width:480px){
+  .hero-cta{flex-direction:column;align-items:flex-start}
+  .btn-lg{width:100%;justify-content:center}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .res-head{flex-direction:column;align-items:flex-start}
+}
+  </style>
+
+  <!-- Structured Data: Organization + Person -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ProfessionalService",
+    "name": "AI Experts",
+    "description": "Custom AI automations for recruiting agencies — CV screening, personalised outreach, candidate follow-ups, ATS automation.",
+    "url": "https://rosalia-yachts.com",
+    "logo": "https://rosalia-yachts.com/logo_big_white.png",
+    "email": "germanaicreator@gmail.com",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Lindwurmstraße 88",
+      "addressLocality": "München",
+      "postalCode": "80337",
+      "addressCountry": "DE"
+    },
+    "founder": {
+      "@type": "Person",
+      "name": "Marcus Heller",
+      "jobTitle": "Founder",
+      "worksFor": { "@type": "Organization", "name": "AI Experts" },
+      "sameAs": ["https://www.linkedin.com/company/limitless-ai-solutions-llc"]
+    },
+    "areaServed": ["DE", "AT", "CH", "GB"],
+    "serviceType": "AI Automation Consulting"
+  }
+  </script>
+
+  <!-- Structured Data: FAQPage -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Do I need to be technical to work with you?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Not at all. Your job is to describe the business problem — where time is being lost, what the workflow looks like, what good output looks like. Marcus handles everything technical from there. If you can explain it, he can build it."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Will this work with our existing ATS and tools?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Marcus assesses your exact stack in the strategy call and builds around what you already use. He has direct experience with Bullhorn, Teamtailor, and Greenhouse, and builds integrations for other tools as needed."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How quickly will we see results?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Version 1 is delivered and running within 5 business days of kickoff. The final, refined version is live within 3 weeks. Most clients see measurable time savings in the first week of Version 1 being live."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Who owns the automation after the project?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "You own everything. Full handover of all code, credentials, and logins at the end of the project. A walkthrough video is recorded so you are never dependent on Marcus to operate what was built."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What if our process changes after the handover?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Since you own the code, you can adapt it yourself if you have the technical capacity. If you prefer support, the optional retainer covers ongoing improvements, adaptation to new tools, and adjustments as your workflow evolves."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is this GDPR-compliant?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Builds are created on EU-based servers where required and use compliant LLM providers. GDPR compliance is built into the architecture from the start — not retrofitted at the end."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "We've tried Zapier before and it didn't work — why is this different?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Off-the-shelf tools are built to be generic and handle 80% of use cases. Custom systems are built to fit your exact workflow, handling the edge cases where generic tools break down. The result is something your team actually trusts and uses every day."
+        }
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="container">
+    <div class="nav-inner">
+      <a href="#hero" class="nav-logo"><picture><source srcset="logo_big_white.webp" type="image/webp"><img src="logo_big_white.png" alt="AI Experts" height="34"></picture></a>
+      <ul class="nav-links">
+        <li><a href="#problem">Problem</a></li>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#results">Results</a></li>
+        <li><a href="#process">Process</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#faq">FAQ</a></li>
+        <li><a href="#assessment">Assessment</a></li>
+        <li><a href="/blog/">Blog</a></li>
+      </ul>
+      <div class="nav-cta">
+        <a href="" class="btn btn-ghost" onclick="Calendly.initPopupWidget({url:'https://calendly.com/dominik-limitless-ai-solutions/30min'});return false;">Book a Call</a>
+      </div>
+      <button class="hamburger" id="ham" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mob" id="mob">
+  <button class="mob-close" id="mob-close">&#x2715;</button>
+  <a href="#problem" class="mob-link">Problem</a>
+  <a href="#services" class="mob-link">Services</a>
+  <a href="#results" class="mob-link">Results</a>
+  <a href="#process" class="mob-link">Process</a>
+  <a href="#about" class="mob-link">About</a>
+  <a href="#faq" class="mob-link">FAQ</a>
+  <a href="#assessment" class="mob-link">Assessment</a>
+  <a href="/blog/" class="mob-link">Blog</a>
+  <a href="" class="btn btn-primary btn-lg" style="margin-top:12px" onclick="Calendly.initPopupWidget({url:'https://calendly.com/dominik-limitless-ai-solutions/30min'});return false;">Book Your Free Strategy Call</a>
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-grid"></div>
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="hero-badge-dot"></span>
+        Available for new projects
+      </div>
+      <h1 class="hero-h1">Your Best Recruiter<br>Shouldn't Be Doing <em>Admin.</em></h1>
+      <p class="hero-sub">AI Experts builds custom AI automations for recruiting agencies — CV screening, personalised outreach, candidate follow-ups, ATS updates. Version 1 delivered in 5 business days.</p>
+      <div class="hero-cta">
+        <a href="" class="btn btn-primary btn-lg" onclick="Calendly.initPopupWidget({url:'https://calendly.com/dominik-limitless-ai-solutions/30min'});return false;">
+          Book Your Free Strategy Call
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a href="#results" class="btn btn-ghost btn-lg">See Client Results</a>
+      </div>
+      <div class="hero-trust">
+        <picture><source srcset="trustpilot_5_stars_in_one_row.webp" type="image/webp"><img src="trustpilot_5_stars_in_one_row.png" alt="5-star Trustpilot rating" height="20"></picture>
+        <span class="hero-trust-txt"><strong>5-star rated</strong> by recruiting agencies across DACH &amp; UK</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section id="stats">
+  <div class="container" style="padding:0">
+    <div class="stats-grid">
+      <div class="stat rv"><div class="stat-num">30+</div><div class="stat-lbl">Automation Projects<br>Delivered</div></div>
+      <div class="stat rv d1"><div class="stat-num">5</div><div class="stat-lbl">Business Days<br>to Version 1</div></div>
+      <div class="stat rv d2"><div class="stat-num">80%</div><div class="stat-lbl">Avg. Reduction in<br>CV Screening Time</div></div>
+      <div class="stat rv d3"><div class="stat-num">3×</div><div class="stat-lbl">Outreach Response<br>Rate Improvement</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="container">
+    <div class="prob-grid">
+      <div class="rv">
+        <span class="label">The Problem</span>
+        <h2 class="section-title">Your Team Is Drowning in Work That Shouldn't Need a Human</h2>
+        <div class="prob-callout">
+          <p>A placement that should take two weeks takes four — because your team is manually doing what a machine could handle in minutes.</p>
+        </div>
+      </div>
+      <ul class="prob-list">
+        <li class="prob-item rv d1">
+          <div class="prob-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          </div>
+          <div class="prob-txt"><strong>Manual CV Screening</strong>200 applications per role. Your consultants read every single one — ranking, filtering, cross-referencing requirements. Hours lost before any real recruiting begins.</div>
+        </li>
+        <li class="prob-item rv d2">
+          <div class="prob-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          </div>
+          <div class="prob-txt"><strong>Generic, Low-Response Outreach</strong>Copy-paste messages with a name swapped in. Good candidates ignore you — not because they're not interested, but because the message didn't feel worth replying to.</div>
+        </li>
+        <li class="prob-item rv d3">
+          <div class="prob-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div class="prob-txt"><strong>Forgotten Follow-Ups</strong>Candidates drop out between first interview and offer because nobody chased. Not because your team didn't care — because they were busy doing everything else.</div>
+        </li>
+        <li class="prob-item rv d4">
+          <div class="prob-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+          </div>
+          <div class="prob-txt"><strong>ATS Always Out of Date</strong>Updating Bullhorn, Teamtailor, or Greenhouse manually after every call. The system is never current. Reporting takes hours. Nothing is where it should be.</div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="container">
+    <div class="svc-head rv">
+      <span class="label">What We Build</span>
+      <h2 class="section-title">End-to-End Automations Built Around Your Workflow</h2>
+      <p class="section-sub">Not off-the-shelf tools with generic features. Custom systems engineered for how your agency actually operates — built on your existing stack.</p>
+    </div>
+    <div class="svc-grid">
+      <div class="svc-card rv d1">
+        <div class="svc-n">01</div>
+        <h3 class="svc-title">CV Screening &amp; Shortlisting</h3>
+        <p class="svc-desc">Applications are scored against role requirements using AI, ranked automatically, and delivered as a clean shortlist directly into your ATS — without a consultant reading a single CV.</p>
+        <span class="svc-tag">Bullhorn · Teamtailor · Greenhouse</span>
+      </div>
+      <div class="svc-card rv d2">
+        <div class="svc-n">02</div>
+        <h3 class="svc-title">Personalised Outreach Engine</h3>
+        <p class="svc-desc">Each message is written using the candidate's LinkedIn profile, recent activity, and current role. Consultants review and send with one click. Response rates that justify the effort.</p>
+        <span class="svc-tag">LinkedIn · AI Copywriting</span>
+      </div>
+      <div class="svc-card rv d3">
+        <div class="svc-n">03</div>
+        <h3 class="svc-title">Automated Follow-Up Sequences</h3>
+        <p class="svc-desc">Follow-ups triggered by ATS status changes — personalised, timely, and requiring zero manual effort. No candidate falls through the cracks because someone forgot to send a message.</p>
+        <span class="svc-tag">ATS-Triggered · Zero Manual Input</span>
+      </div>
+      <div class="svc-card rv d1">
+        <div class="svc-n">04</div>
+        <h3 class="svc-title">Job Ad Generator</h3>
+        <p class="svc-desc">A role brief goes in. A fully formatted, on-brand job ad comes out in under 60 seconds. Consistent tone, compliant language, ready to post. No more 45-minute writing sessions per role.</p>
+        <span class="svc-tag">60 Seconds · On-Brand · Ready to Post</span>
+      </div>
+      <div class="svc-card rv d2">
+        <div class="svc-n">05</div>
+        <h3 class="svc-title">ATS Automation &amp; Reporting</h3>
+        <p class="svc-desc">CRM and ATS records updated automatically after calls, interviews, and status changes. Reports generated on demand. The system is always current — without anyone touching it manually.</p>
+        <span class="svc-tag">Real-Time Sync · Auto-Reports</span>
+      </div>
+      <div class="svc-card rv d3">
+        <div class="svc-n">06</div>
+        <h3 class="svc-title">Custom &amp; Bespoke Workflows</h3>
+        <p class="svc-desc">Every agency has a bottleneck that doesn't fit a template. If there's a repetitive, rules-based process eating your team's time, we'll scope and build the automation for it.</p>
+        <span class="svc-tag">Scoped in Strategy Call</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RESULTS -->
+<section id="results">
+  <div class="container">
+    <div class="res-head">
+      <div class="rv">
+        <span class="label">Client Results</span>
+        <h2 class="section-title">Real Automations.<br>Measurable Outcomes.</h2>
+      </div>
+      <div class="rv d1">
+        <p class="section-sub">Four examples of what gets built — and what changes when it goes live.</p>
+      </div>
+    </div>
+    <div class="res-grid">
+      <div class="res-card rv d1">
+        <div class="res-ghost">01</div>
+        <p class="res-lbl">Case Study</p>
+        <p class="res-agency">Executive Search Agency · 12 Consultants</p>
+        <h3>Automated CV Screener</h3>
+        <p class="res-rl">Problem</p>
+        <p class="res-rt">The team spent 3–4 hours per role manually reading and ranking CVs from job boards.</p>
+        <p class="res-rl">Solution</p>
+        <p class="res-rt">An automation that pulls incoming CVs, scores them against role requirements using AI, and delivers a ranked shortlist directly into the ATS.</p>
+        <div class="res-outcome">
+          <p class="res-rl">Result</p>
+          <p>CV screening time reduced by 80%. Shortlists arrive within minutes of applications closing.</p>
+        </div>
+      </div>
+      <div class="res-card rv d2">
+        <div class="res-ghost">02</div>
+        <p class="res-lbl">Case Study</p>
+        <p class="res-agency">Permanent Placement Agency · 8 Consultants</p>
+        <h3>Personalised Outreach Engine</h3>
+        <p class="res-rl">Problem</p>
+        <p class="res-rt">Outreach to passive candidates was generic and had a low response rate. Writing individual messages was too time-consuming at scale.</p>
+        <p class="res-rl">Solution</p>
+        <p class="res-rt">A system that researches each candidate's LinkedIn profile and generates a personalised message — ready to send with one click.</p>
+        <div class="res-outcome">
+          <p class="res-rl">Result</p>
+          <p>Passive outreach response rate increased from 11% to 34%.</p>
+        </div>
+      </div>
+      <div class="res-card rv d1">
+        <div class="res-ghost">03</div>
+        <p class="res-lbl">Case Study</p>
+        <p class="res-agency">Tech Recruitment Agency · 5 Consultants</p>
+        <h3>Candidate Follow-Up Automation</h3>
+        <p class="res-rl">Problem</p>
+        <p class="res-rt">Interview follow-ups were being missed or delayed, causing candidates to drop out or accept competing offers.</p>
+        <p class="res-rl">Solution</p>
+        <p class="res-rt">Automated follow-up sequences triggered by ATS status changes — personalised, timely, requiring zero manual effort from the team.</p>
+        <div class="res-outcome">
+          <p class="res-rl">Result</p>
+          <p>Candidate dropout between first interview and offer dropped by 40%.</p>
+        </div>
+      </div>
+      <div class="res-card rv d2">
+        <div class="res-ghost">04</div>
+        <p class="res-lbl">Case Study</p>
+        <p class="res-agency">Multi-Sector Agency · 20 Consultants</p>
+        <h3>Job Ad Generator</h3>
+        <p class="res-rl">Problem</p>
+        <p class="res-rt">Writing job ads for every new role was consuming 30–45 minutes per posting across the team.</p>
+        <p class="res-rl">Solution</p>
+        <p class="res-rt">An automation that takes the role brief and outputs a fully formatted, on-brand job ad ready to post — in under 60 seconds.</p>
+        <div class="res-outcome">
+          <p class="res-rl">Result</p>
+          <p>Ad creation time reduced from 45 minutes to under 2 minutes per role.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section id="process">
+  <div class="container">
+    <div class="proc-head rv">
+      <span class="label">How It Works</span>
+      <h2 class="section-title">From First Call to Working Automation in Three Weeks</h2>
+      <p class="section-sub">A structured process with no grey areas. You know what happens at every step — and you see results fast.</p>
+    </div>
+    <div class="proc-steps">
+      <div class="proc-step rv">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h3>Free Strategy Call</h3>
+          <p>We walk through your current workflow, identify where time is being lost, and map out what's realistically automatable. You leave with a concrete recommendation — no pitch, no obligation. Most clients describe it as the most useful 30 minutes they've spent on the topic.</p>
+          <span class="step-tag">30 minutes · Free · No obligation</span>
+        </div>
+      </div>
+      <div class="proc-step rv d1">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <h3>Scoping &amp; Onboarding</h3>
+          <p>A clear onboarding checklist — what access I need, which tools are in play, who I'll coordinate with. I set up the infrastructure and get started immediately. No lengthy discovery phases, no waiting weeks to begin.</p>
+          <span class="step-tag">Clear scope · Fast start</span>
+        </div>
+      </div>
+      <div class="proc-step rv d2">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <h3>Version 1 in 5 Business Days</h3>
+          <p>The first working version of the automation is presented live to your team. Not a prototype. Not a demo. A real, functional system running against your actual workflow. We collect feedback and refine from there.</p>
+          <span class="step-tag">Working system · Live demo · Team feedback</span>
+        </div>
+      </div>
+      <div class="proc-step rv d3">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <h3>Final Handover</h3>
+          <p>The polished version is delivered within 3 weeks of kickoff. All logins and code are transferred to you — you own everything. I record a full walkthrough video and optionally run a team training session so your team hits the ground running.</p>
+          <span class="step-tag">You own the code · Full walkthrough · Optional training</span>
+        </div>
+      </div>
+      <div class="proc-step rv d4">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <h3>Optional Retainer</h3>
+          <p>For agencies that want to keep building: a monthly retainer including ongoing improvements, adaptation to new AI tools, identification of further automation opportunities, and priority support. The proposal is tailored after the first project — built around where the biggest gains still are.</p>
+          <span class="step-tag">Ongoing improvements · Priority support · Optional</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials">
+  <div class="container">
+    <div class="test-head rv">
+      <span class="label">What Clients Say</span>
+      <h2 class="section-title">Agencies That Have Made the Switch</h2>
+      <p class="section-sub">Every review below is from a recruiting agency that decided the admin problem was worth fixing.</p>
+    </div>
+    <div class="test-row1">
+      <div class="tcard rv d1">
+        <div class="tcard-stars"><picture><source srcset="trustpilot_5_stars_in_one_row.webp" type="image/webp"><img src="trustpilot_5_stars_in_one_row.png" alt="5 Stars" height="20" loading="lazy"></picture></div>
+        <p class="tcard-text">Marcus automated our entire CV screening process — what used to take my team half a day now happens in minutes. The quality of the shortlists is actually better than what we were producing manually. An easy recommendation.</p>
+        <div class="tcard-author">
+          <div class="tcard-name">Stefan R.</div>
+          <div class="tcard-role">Managing Director, Executive Search Agency</div>
+          <div class="tcard-date">March 2026</div>
+        </div>
+      </div>
+      <div class="tcard rv d2">
+        <div class="tcard-stars"><picture><source srcset="trustpilot_5_stars_in_one_row.webp" type="image/webp"><img src="trustpilot_5_stars_in_one_row.png" alt="5 Stars" height="20" loading="lazy"></picture></div>
+        <p class="tcard-text">We brought Marcus in to help with candidate outreach and within a month our response rates had nearly tripled. He understood our workflow immediately — we barely had to explain anything. Fast, professional, and he actually delivers what he promises.</p>
+        <div class="tcard-author">
+          <div class="tcard-name">Claire M.</div>
+          <div class="tcard-role">Founder, Tech Recruitment Agency</div>
+          <div class="tcard-date">February 2026</div>
+        </div>
+      </div>
+      <div class="tcard rv d3">
+        <div class="tcard-stars"><picture><source srcset="trustpilot_5_stars_in_one_row.webp" type="image/webp"><img src="trustpilot_5_stars_in_one_row.png" alt="5 Stars" height="20" loading="lazy"></picture></div>
+        <p class="tcard-text">I was sceptical at first — we'd tried automating things before with off-the-shelf tools and it never quite worked. Marcus built something that fits exactly how we operate. The handover was thorough and the team picked it up immediately.</p>
+        <div class="tcard-author">
+          <div class="tcard-name">Jonas W.</div>
+          <div class="tcard-role">Partner, Permanent Placement Agency</div>
+          <div class="tcard-date">January 2026</div>
+        </div>
+      </div>
+    </div>
+    <div class="test-row2">
+      <div class="tcard rv d1">
+        <div class="tcard-stars"><picture><source srcset="trustpilot_5_stars_in_one_row.webp" type="image/webp"><img src="trustpilot_5_stars_in_one_row.png" alt="5 Stars" height="20" loading="lazy"></picture></div>
+        <p class="tcard-text">AI Experts helped us handle 40% more roles this quarter without adding a single headcount. The follow-up automation alone has saved us multiple placements that would have fallen through the cracks. Genuinely impressive work.</p>
+        <div class="tcard-author">
+          <div class="tcard-name">Nadine K.</div>
+          <div class="tcard-role">Operations Lead, Mid-Size Recruitment Firm</div>
+          <div class="tcard-date">November 2025</div>
+        </div>
+      </div>
+      <div class="tcard rv d2">
+        <div class="tcard-stars"><picture><source srcset="trustpilot_5_stars_in_one_row.webp" type="image/webp"><img src="trustpilot_5_stars_in_one_row.png" alt="5 Stars" height="20" loading="lazy"></picture></div>
+        <p class="tcard-text">Marcus is the rare kind of consultant who speaks both fluent business and fluent tech. He didn't just build the automation — he helped us think through which processes were actually worth automating first. That strategic lens made a real difference.</p>
+        <div class="tcard-author">
+          <div class="tcard-name">Tom B.</div>
+          <div class="tcard-role">CEO, Boutique Search Firm</div>
+          <div class="tcard-date">October 2025</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-img-wrap rv">
+        <div class="about-img-frame">
+          <picture><source srcset="me.webp" type="image/webp"><img src="me.png" alt="Marcus Heller — Founder, AI Experts" loading="lazy"></picture>
+        </div>
+        <div class="about-badge">
+          <div class="about-badge-n">30+</div>
+          <div class="about-badge-t">Projects<br>Delivered</div>
+        </div>
+      </div>
+      <div class="about-content rv d2">
+        <span class="label">About</span>
+        <h2>Marcus Heller,<br><em>Founder of AI Experts</em></h2>
+        <p class="about-p">I spent five years working in and around the recruitment industry before I built my first automation. I saw the same bottlenecks in every agency I worked with — good people spending too much time on tasks a machine could handle.</p>
+        <p class="about-p">I founded AI Experts to fix that. I only work with recruiting agencies, which means I already know your tools, your terminology, and your workflow. You don't have to bring me up to speed on how ATS systems work or what a placement process looks like. We can focus on building.</p>
+        <p class="about-p">All solutions are built GDPR-compliant on EU-hosted infrastructure where required, using tools you already use — or better ones if needed.</p>
+        <ul class="about-creds">
+          <li class="about-cred"><strong>5+ years</strong> working in and around the recruitment industry</li>
+          <li class="about-cred"><strong>30+ automation projects</strong> delivered across DACH &amp; UK</li>
+          <li class="about-cred"><strong>Deep expertise</strong> in LLMs, Python, n8n, Bullhorn, Teamtailor, Greenhouse</li>
+          <li class="about-cred"><strong>GDPR-compliant</strong> builds on EU-hosted infrastructure</li>
+          <li class="about-cred">Works in <strong>German and English</strong></li>
+        </ul>
+        <a href="" class="btn btn-primary" onclick="Calendly.initPopupWidget({url:'https://calendly.com/dominik-limitless-ai-solutions/30min'});return false;">
+          Book a Free Strategy Call
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="container">
+    <div class="faq-grid">
+      <div class="faq-sidebar rv">
+        <span class="label">FAQ</span>
+        <h2 class="section-title">Common Questions</h2>
+        <p class="section-sub">If you don't find your answer here, bring it to the strategy call.</p>
+        <a href="" class="btn btn-primary" onclick="Calendly.initPopupWidget({url:'https://calendly.com/dominik-limitless-ai-solutions/30min'});return false;">Book a Call</a>
+      </div>
+      <div class="faq-list rv d2">
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">Do I need to be technical to work with you?<span class="faq-icon">+</span></button>
+          <div class="faq-ans"><div class="faq-ans-in">Not at all. Your job is to describe the business problem — where time is being lost, what the workflow looks like, what good output looks like. I handle everything technical from there. If you can explain it, I can build it.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">Will this work with our existing ATS and tools?<span class="faq-icon">+</span></button>
+          <div class="faq-ans"><div class="faq-ans-in">Yes. I assess your exact stack in the strategy call and build around what you already use. I have direct experience with Bullhorn, Teamtailor, and Greenhouse, and I build integrations for other tools as needed. The goal is that your team's day-to-day doesn't change — the automation just handles the parts that shouldn't require a human.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">How quickly will we see results?<span class="faq-icon">+</span></button>
+          <div class="faq-ans"><div class="faq-ans-in">Version 1 is delivered and running within 5 business days of kickoff. The final, refined version is live within 3 weeks. Most clients see measurable time savings in the first week of Version 1 being live.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">Who owns the automation after the project?<span class="faq-icon">+</span></button>
+          <div class="faq-ans"><div class="faq-ans-in">You own everything. Full handover of all code, credentials, and logins at the end of the project. I record a walkthrough video so you're never dependent on me to operate what was built. The optional retainer exists for agencies that want to keep developing — not as a way of locking you in.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">What if our process changes after the handover?<span class="faq-icon">+</span></button>
+          <div class="faq-ans"><div class="faq-ans-in">Since you own the code, you can adapt it yourself if you have the technical capacity. If you'd prefer support, that's exactly what the optional retainer covers — ongoing improvements, adaptation to new tools, and adjustments as your workflow evolves.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">Is this GDPR-compliant?<span class="faq-icon">+</span></button>
+          <div class="faq-ans"><div class="faq-ans-in">Yes. I build on EU-based servers where required and advise on compliant LLM providers throughout the project. GDPR compliance is built into the architecture from the start — not retrofitted at the end.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">We've tried Zapier before and it didn't work — why is this different?<span class="faq-icon">+</span></button>
+          <div class="faq-ans"><div class="faq-ans-in">Off-the-shelf tools are built to be generic. They handle 80% of use cases, but the last 20% is usually where the edge cases live — and it's where they break down. I build custom systems that fit your exact workflow, not a workflow designed to approximate yours. The result is something your team actually trusts and uses every day.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ASSESSMENT -->
+<section id="assessment">
+  <div class="container">
+    <div class="asmnt-head rv">
+      <span class="label">AI Assessment</span>
+      <h2 class="section-title">Know Exactly Where Your Agency<br>Is <em>Losing Time</em></h2>
+      <p class="section-sub">A comprehensive audit of your recruiting workflows — delivered by Marcus personally. Walk away with a prioritised roadmap of automations ranked by impact, effort, and ROI.</p>
+    </div>
+    <div class="asmnt-layout">
+      <div class="asmnt-deliverables">
+        <div class="asmnt-d rv d1">
+          <div class="asmnt-d-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div class="asmnt-d-body">
+            <strong>2-Hour Deep-Dive Workflow Review</strong>
+            <p>Marcus walks through your current processes end-to-end — sourcing, screening, outreach, follow-up, ATS management — with the specific goal of identifying every step that doesn't require human judgement.</p>
+          </div>
+        </div>
+        <div class="asmnt-d rv d2">
+          <div class="asmnt-d-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+          </div>
+          <div class="asmnt-d-body">
+            <strong>Full AI-Readiness Audit</strong>
+            <p>An honest assessment of your current stack — ATS, CRM, communication tools — and exactly which parts are ready to automate now versus what requires groundwork first. No inflated promises.</p>
+          </div>
+        </div>
+        <div class="asmnt-d rv d3">
+          <div class="asmnt-d-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          </div>
+          <div class="asmnt-d-body">
+            <strong>Prioritised Automation Roadmap</strong>
+            <p>Every identified opportunity ranked by impact and implementation effort — so you know exactly what to build first for the fastest return. Not a generic list. A plan tailored to your agency's size, tools, and pain points.</p>
+          </div>
+        </div>
+        <div class="asmnt-d rv d4">
+          <div class="asmnt-d-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          </div>
+          <div class="asmnt-d-body">
+            <strong>Written Report — Delivered in 5 Business Days</strong>
+            <p>A structured document covering findings, tool recommendations, estimated time savings, and concrete next steps. Something you can act on immediately — or hand to a technical team.</p>
+          </div>
+        </div>
+        <div class="asmnt-d rv d5">
+          <div class="asmnt-d-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          </div>
+          <div class="asmnt-d-body">
+            <strong>30-Minute Follow-Up Call</strong>
+            <p>Once you've read the report, we get on a call to walk through the findings, answer questions, and discuss which automations make the most sense to prioritise given your current goals.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="asmnt-card rv d2">
+        <div class="asmnt-card-badge">
+          <span class="asmnt-card-badge-dot"></span>
+          One-Time Engagement
+        </div>
+        <div class="asmnt-price">
+          <span class="asmnt-price-cur">€</span>
+          <span class="asmnt-price-amt">2,500</span>
+        </div>
+        <p class="asmnt-price-type">One-time fee · No recurring commitment</p>
+        <div class="asmnt-card-divider"></div>
+        <ul class="asmnt-incl">
+          <li><span><strong>2-hour</strong> workflow review session</span></li>
+          <li><span><strong>Full AI-readiness</strong> audit of your stack</span></li>
+          <li><span><strong>Prioritised roadmap</strong> of automation opportunities</span></li>
+          <li><span><strong>Written report</strong> within 5 business days</span></li>
+          <li><span><strong>30-min follow-up call</strong> to review findings</span></li>
+          <li><span>Works with your existing tools — <strong>no switching required</strong></span></li>
+        </ul>
+        <a href="https://buy.stripe.com/test_6oUeV61fdgbC40O53Kd7q02" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
+          Get Your Assessment
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <p class="asmnt-card-note">Secure checkout via Stripe. After payment, you'll receive a confirmation and Marcus will reach out within 24 hours to schedule your session.</p>
+        <div style="text-align:center">
+          <span class="asmnt-test-badge">&#9679; Test Mode</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section id="cta">
+  <div class="container">
+    <div class="cta-in rv">
+      <span class="label">Get Started</span>
+      <h2>Ready to Stop Losing Time<br>to <em>Work a Machine Can Do?</em></h2>
+      <p class="cta-sub">Book a free 30-minute strategy call. Walk away with a clear picture of what can be automated in your agency — and how I'd approach it. No pitch, no obligation.</p>
+      <a href="" class="btn btn-primary btn-lg" onclick="Calendly.initPopupWidget({url:'https://calendly.com/dominik-limitless-ai-solutions/30min'});return false;">
+        Book Your Free Strategy Call
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <p class="cta-note">30 minutes · Free · No obligation · Available for DACH &amp; UK agencies</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <picture><source srcset="logo_big_white.webp" type="image/webp"><img src="logo_big_white.png" alt="AI Experts" height="30" loading="lazy"></picture>
+        <p>Custom AI automations for recruiting agencies. CV screening, personalised outreach, candidate follow-ups, ATS automation — delivered in 5 business days.</p>
+        <div class="foot-social">
+          <a href="https://www.linkedin.com/company/limitless-ai-solutions-llc" target="_blank" rel="noopener noreferrer" class="soc" aria-label="LinkedIn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
+          </a>
+          <a href="https://www.instagram.com/germanaicreator" target="_blank" rel="noopener noreferrer" class="soc" aria-label="Instagram">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </a>
+        </div>
+      </div>
+      <div class="foot-col">
+        <h4>Navigation</h4>
+        <ul class="foot-links">
+          <li><a href="#problem">The Problem</a></li>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#results">Client Results</a></li>
+          <li><a href="#process">How It Works</a></li>
+          <li><a href="#testimonials">Reviews</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#faq">FAQ</a></li>
+          <li><a href="/blog/">Blog</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4>Contact</h4>
+        <ul class="foot-links">
+          <li><a href="mailto:germanaicreator@gmail.com">germanaicreator@gmail.com</a></li>
+          <li><a href="" onclick="Calendly.initPopupWidget({url:'https://calendly.com/dominik-limitless-ai-solutions/30min'});return false;">Book a Strategy Call</a></li>
+          <li><a href="https://www.linkedin.com/company/limitless-ai-solutions-llc" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+          <li><a href="https://www.instagram.com/germanaicreator" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-btm">
+      <p class="foot-copy">© 2026 AI Experts. All rights reserved.</p>
+      <div class="foot-legal">
+        <a href="/imprint/">Imprint</a>
+        <a href="/privacy/">Privacy Policy</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- IMPRINT MODAL -->
+<div class="mo" id="mo-imprint">
+  <div class="mdl" role="dialog" aria-modal="true">
+    <button class="mdl-close" onclick="closeMo('imprint')" aria-label="Close">&#x2715;</button>
+    <h2>Imprint</h2>
+    <p class="mdl-sub">Legal disclosure pursuant to § 5 TMG (Germany)</p>
+    <h3>Information pursuant to § 5 TMG</h3>
+    <p>AI Experts<br>Marcus Heller<br>Lindwurmstraße 88<br>80337 München<br>Germany</p>
+    <h3>Contact</h3>
+    <p>Email: <a href="mailto:germanaicreator@gmail.com">germanaicreator@gmail.com</a></p>
+    <h3>VAT Identification Number</h3>
+    <p>VAT ID pursuant to § 27a UStG: DE 345 678 901</p>
+    <h3>Responsible for Content</h3>
+    <p>Marcus Heller (address as above)</p>
+    <h3>Dispute Resolution</h3>
+    <p>The European Commission provides a platform for online dispute resolution (ODR): <a href="https://ec.europa.eu/consumers/odr" target="_blank" rel="noopener noreferrer">https://ec.europa.eu/consumers/odr</a>. We are not obliged to participate in dispute resolution proceedings before a consumer arbitration board.</p>
+    <h3>Disclaimer</h3>
+    <p>Despite careful content control, we assume no liability for the content of external links. The operators of linked pages are solely responsible for their content.</p>
+  </div>
+</div>
+
+<!-- PRIVACY POLICY MODAL -->
+<div class="mo" id="mo-privacy">
+  <div class="mdl" role="dialog" aria-modal="true">
+    <button class="mdl-close" onclick="closeMo('privacy')" aria-label="Close">&#x2715;</button>
+    <h2>Privacy Policy</h2>
+    <p class="mdl-sub">Last updated: April 2026</p>
+    <h3>1. Controller</h3>
+    <p>AI Experts, Marcus Heller, Lindwurmstraße 88, 80337 München, Germany<br>Email: germanaicreator@gmail.com</p>
+    <h3>2. Data We Collect</h3>
+    <p>When you visit this website, the following data may be processed:</p>
+    <ul>
+      <li>Server log data (IP address, browser type, referring URL, date/time of access)</li>
+      <li>Data you voluntarily provide when booking via Calendly (name, email, notes)</li>
+      <li>Data you provide when contacting us by email</li>
+    </ul>
+    <h3>3. Purpose and Legal Basis</h3>
+    <p>Server log data is processed to ensure technical operation and security (Art. 6(1)(f) GDPR). Data provided via Calendly or email is processed to respond to enquiries and manage scheduling (Art. 6(1)(b) GDPR).</p>
+    <h3>4. Calendly</h3>
+    <p>This website uses Calendly (Calendly LLC, 271 17th Street NW, Atlanta, Georgia 30363, USA) to enable appointment scheduling. When you use the scheduling widget, data is transmitted to Calendly. Calendly is certified under the EU–U.S. Data Privacy Framework. Please refer to Calendly's own privacy policy for details.</p>
+    <h3>5. Google Fonts</h3>
+    <p>This website loads fonts from Google Fonts (Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, Ireland). Your IP address may be transmitted to Google servers in the process, on the basis of Art. 6(1)(f) GDPR.</p>
+    <h3>6. Data Retention</h3>
+    <p>We retain personal data only as long as necessary to fulfil the purposes described above or as required by applicable law. Email enquiries are deleted after three years if no business relationship has resulted.</p>
+    <h3>7. Your Rights</h3>
+    <p>Under the GDPR, you have the right to access, rectification, erasure, restriction of processing, data portability, and the right to object. To exercise any of these rights, contact us at germanaicreator@gmail.com. You also have the right to lodge a complaint with a supervisory authority.</p>
+    <h3>8. Supervisory Authority</h3>
+    <p>Bavarian State Office for Data Protection Supervision (BayLDA)<br>Promenade 27, 91522 Ansbach, Germany</p>
+    <h3>9. Changes to This Policy</h3>
+    <p>We may update this privacy policy from time to time. The current version is always available on this page.</p>
+  </div>
+</div>
+
+<script>
+// Nav scroll
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 40));
+
+// Mobile menu
+const ham = document.getElementById('ham');
+const mob = document.getElementById('mob');
+const mobClose = document.getElementById('mob-close');
+ham.addEventListener('click', () => { mob.classList.add('open'); document.body.style.overflow = 'hidden'; });
+mobClose.addEventListener('click', () => { mob.classList.remove('open'); document.body.style.overflow = ''; });
+document.querySelectorAll('.mob-link').forEach(l => l.addEventListener('click', () => { mob.classList.remove('open'); document.body.style.overflow = ''; }));
+
+// Scroll reveal
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); obs.unobserve(e.target); } });
+}, { threshold: 0.1, rootMargin: '0px 0px -32px 0px' });
+document.querySelectorAll('.rv').forEach(el => obs.observe(el));
+
+// FAQ accordion
+document.querySelectorAll('.faq-q').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const item = btn.closest('.faq-item');
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i => { i.classList.remove('open'); i.querySelector('.faq-q').setAttribute('aria-expanded','false'); });
+    if (!isOpen) { item.classList.add('open'); btn.setAttribute('aria-expanded','true'); }
+  });
+});
+
+// Modals
+function openMo(id) { document.getElementById('mo-'+id).classList.add('open'); document.body.style.overflow='hidden'; }
+function closeMo(id) { document.getElementById('mo-'+id).classList.remove('open'); document.body.style.overflow=''; }
+document.querySelectorAll('.mo').forEach(o => o.addEventListener('click', e => { if (e.target===o) { o.classList.remove('open'); document.body.style.overflow=''; } }));
+document.addEventListener('keydown', e => { if (e.key==='Escape') document.querySelectorAll('.mo.open').forEach(o => { o.classList.remove('open'); document.body.style.overflow=''; }); });
+
+// Smooth scroll for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const t = document.querySelector(a.getAttribute('href'));
+    if (t) { e.preventDefault(); window.scrollTo({ top: t.getBoundingClientRect().top + scrollY - 76, behavior: 'smooth' }); }
+  });
+});
+</script>
+</body>
+</html>
