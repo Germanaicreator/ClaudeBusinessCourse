@@ -27,13 +27,16 @@ BASE_DIR = Path(__file__).parent
 
 # ─── App setup ────────────────────────────────────────────────────────────────
 app = Flask(__name__)
-app.secret_key = os.environ.get('CC_SECRET_KEY', 'cc-secret-please-change')
-app.config['MAX_CONTENT_LENGTH'] = 200 * 1024 * 1024
 
-CC_PASSWORD    = os.environ.get('CC_PASSWORD', 'changeme123')
-CC_SSO_SECRET  = os.environ.get('CC_SSO_SECRET', 'cc-sso-shared-secret-change-me')
-INVOICE_URL    = os.environ.get('INVOICE_URL', 'https://invoice.YOUR_DOMAIN')
-DASHBOARD_URL  = os.environ.get('DASHBOARD_URL', 'https://dashboard.YOUR_DOMAIN')
+# Mandatory configurations - App will crash with a KeyError if any are missing in .env
+app.secret_key = os.environ['CC_SECRET_KEY']
+CC_PASSWORD    = os.environ['CC_PASSWORD']
+CC_SSO_SECRET  = os.environ['CC_SSO_SECRET']
+INVOICE_URL    = os.environ['INVOICE_URL']
+DASHBOARD_URL  = os.environ['DASHBOARD_URL']
+
+# Optional/Standard config
+app.config['MAX_CONTENT_LENGTH'] = 200 * 1024 * 1024
 
 # Media / content paths
 MEDIA_DIR     = BASE_DIR / 'media'
